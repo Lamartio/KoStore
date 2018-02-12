@@ -15,9 +15,12 @@ internal object Util {
     fun <T> combineReducers(previous: (T, Any) -> T, next: (T, Any) -> T): (T, Any) -> T =
             { state, action -> previous(state, action).let { next(it, action) } }
 
-    fun <T> combineListeners(previous: (T) -> Unit, next: (T) -> Unit): (T) -> Unit = {
-        previous(it)
-        next(it)
+    fun <T> wrapObservers(observers: Iterable<(T) -> Unit>): (T) -> Unit {
+        var result = { state: T -> }
+
+        observers.forEach { next -> result = result.let { previous -> { previous(it); next(it) } } }
+
+        return result
     }
 
 }

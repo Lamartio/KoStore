@@ -4,10 +4,10 @@ import kotlin.properties.Delegates
 
 open class Store<T>(state: T) : (Any) -> Unit {
 
-    var state: T by Delegates.observable(state) { _, _, after -> onStateChanged(after) }
+    var state: T by Delegates.observable(state) { _, _, after -> observers(after) }
         private set
 
-    private var onStateChanged: (T) -> Unit = {}
+    private var observers = CompositeObservers<T>()
     private var middleware: (Store<T>, Any, (Any) -> Unit) -> Unit = { _, action, next -> next(action) }
     private var reducer: (T, Any) -> T = { state, action -> state }
 
@@ -29,8 +29,8 @@ open class Store<T>(state: T) : (Any) -> Unit {
         this.reducer = Util.combineReducers(this.reducer, reducer)
     }
 
-    fun addListener(onStateChanged: (T) -> Unit): Store<T> = apply {
-        this.onStateChanged = Util.combineListeners(this.onStateChanged, onStateChanged)
-    }
+    fun addObserver(observer: (T) -> Unit): Store<T> = apply { observers.add(observer) }
+
+    fun removeObserver(observer: (T) -> Unit): Store<T> = apply { observers.remove(observer) }
 
 }
