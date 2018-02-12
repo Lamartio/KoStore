@@ -41,3 +41,6 @@ compileTestKotlin {
     }
 }
 
+jar {
+    version = "0.5.0"
+}
