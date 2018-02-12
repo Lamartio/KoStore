@@ -1,4 +1,4 @@
-package lamart.io.kosmos
+package io.lamart.kosmos
 
 open class CompositeMiddleware<T> : (Store<T>, Any, (Any) -> Unit) -> Unit {
 
@@ -15,7 +15,7 @@ open class CompositeMiddleware<T> : (Store<T>, Any, (Any) -> Unit) -> Unit {
     override fun invoke(store: Store<T>, action: Any, next: (Any) -> Unit) = middleware(store, action, next)
 
     fun add(middleware: (Store<T>, Any, (Any) -> Unit) -> Unit): CompositeMiddleware<T> = apply {
-        this.middleware = StoreUtil.combineMiddlewares(this.middleware, middleware)
+        this.middleware = Util.combineMiddlewares(this.middleware, middleware)
     }
 
 }

@@ -1,4 +1,4 @@
-package lamart.io.kosmos
+package io.lamart.kosmos
 
 open class CompositeReducer<T> : (T, Any) -> T {
 
@@ -15,7 +15,7 @@ open class CompositeReducer<T> : (T, Any) -> T {
     override fun invoke(state: T, action: Any): T = reducer(state, action)
 
     fun add(reducer: (T, Any) -> T): CompositeReducer<T> = apply {
-        this.reducer = StoreUtil.combineReducers(this.reducer, reducer)
+        this.reducer = Util.combineReducers(this.reducer, reducer)
     }
 
 }

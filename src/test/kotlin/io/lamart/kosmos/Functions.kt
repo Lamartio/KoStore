@@ -1,7 +1,5 @@
 package io.lamart.kosmos
 
-import lamart.io.kosmos.Store
-
 internal object Functions {
 
     fun emptyReducer(state: Int, action: Any): Int = state

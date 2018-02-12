@@ -1,4 +1,4 @@
-package lamart.io.kosmos
+package io.lamart.kosmos
 
 open class CompositeListener<T> : (T) -> Unit {
 
@@ -15,7 +15,7 @@ open class CompositeListener<T> : (T) -> Unit {
     override fun invoke(state: T) = listener(state)
 
     fun add(listener: (T) -> Unit): CompositeListener<T> = apply {
-        this.listener = StoreUtil.combineListeners<T>(this.listener, listener)
+        this.listener = Util.combineListeners<T>(this.listener, listener)
     }
 
 }

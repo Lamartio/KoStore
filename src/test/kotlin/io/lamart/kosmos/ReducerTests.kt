@@ -1,8 +1,6 @@
 package io.lamart.kosmos
 
-import lamart.io.kosmos.CompositeReducer
-import lamart.io.kosmos.StoreUtil
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 
@@ -11,7 +9,7 @@ class ReducerTests {
     @Test
     fun combineReducers() {
         var state = 1
-        val reducer = StoreUtil.combineReducers(Functions::emptyReducer, Functions::mathReducer)
+        val reducer = Util.combineReducers(Functions::emptyReducer, Functions::mathReducer)
 
         reducer(state, "increment")
                 .also { state = it }
@@ -25,9 +23,9 @@ class ReducerTests {
     @Test
     fun multiCombineReducers() {
         var state = 1
-        val reducer = StoreUtil.combineReducers(
+        val reducer = Util.combineReducers(
                 Functions::emptyReducer,
-                StoreUtil.combineReducers(Functions::mathReducer, Functions::mathReducer)
+                Util.combineReducers(Functions::mathReducer, Functions::mathReducer)
         )
 
         reducer(state, "increment")

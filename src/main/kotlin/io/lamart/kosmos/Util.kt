@@ -1,6 +1,6 @@
-package lamart.io.kosmos
+package io.lamart.kosmos
 
-internal object StoreUtil {
+internal object Util {
 
     fun <T> combineMiddlewares(
             previous: (Store<T>, Any, (Any) -> Unit) -> Unit,

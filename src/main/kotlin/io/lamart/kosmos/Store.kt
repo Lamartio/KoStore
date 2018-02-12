@@ -1,4 +1,4 @@
-package lamart.io.kosmos
+package io.lamart.kosmos
 
 import kotlin.properties.Delegates
 
@@ -22,15 +22,15 @@ open class Store<T>(state: T) : (Any) -> Unit {
     fun dispatch(action: Any): Store<T> = apply { this(action) }
 
     fun addMiddleware(middleware: (Store<T>, Any, (Any) -> Unit) -> Unit): Store<T> = apply {
-        this.middleware = StoreUtil.combineMiddlewares(this.middleware, middleware)
+        this.middleware = Util.combineMiddlewares(this.middleware, middleware)
     }
 
     fun addReducer(reducer: (T, Any) -> T): Store<T> = apply {
-        this.reducer = StoreUtil.combineReducers(this.reducer, reducer)
+        this.reducer = Util.combineReducers(this.reducer, reducer)
     }
 
     fun addListener(onStateChanged: (T) -> Unit): Store<T> = apply {
-        this.onStateChanged = StoreUtil.combineListeners(this.onStateChanged, onStateChanged)
+        this.onStateChanged = Util.combineListeners(this.onStateChanged, onStateChanged)
     }
 
 }

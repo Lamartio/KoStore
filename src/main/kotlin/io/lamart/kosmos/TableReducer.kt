@@ -1,4 +1,4 @@
-package lamart.io.kosmos
+package io.lamart.kosmos
 
 open class TableReducer<T>(init: TableReducer<T>.() -> Unit = {}) : (T, Any) -> T {
 
@@ -36,7 +36,7 @@ open class TableReducer<T>(init: TableReducer<T>.() -> Unit = {}) : (T, Any) -> 
     )
 }
 
-inline fun <T, reified S : T, reified A : Any> TableReducer<T>.Result<S, A>.creates(crossinline creator: S.(A) -> T) =
+inline fun <T, reified S : T, reified A : Any> TableReducer.Result<S, A>.creates(crossinline creator: S.(A) -> T) =
         setReducer { state, action ->
             reducer(state, action).let { state ->
                 if (state is S && action is A && statePredicate(state) && actionPredicate(state, action))

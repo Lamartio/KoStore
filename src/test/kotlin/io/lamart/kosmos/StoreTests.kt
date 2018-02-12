@@ -1,8 +1,6 @@
 package io.lamart.kosmos
 
-import lamart.io.kosmos.Store
-import org.junit.Assert
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class StoreTests {

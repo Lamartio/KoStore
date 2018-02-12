@@ -1,8 +1,6 @@
 package io.lamart.kosmos
 
-import lamart.io.kosmos.Store
-import lamart.io.kosmos.TableReducer
-import lamart.io.kosmos.creates
+import io.lamart.kosmos.Store
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
