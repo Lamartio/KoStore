@@ -8,7 +8,7 @@ class MiddlewareTests {
     @Test
     fun combineMiddleware() {
         val store = Store(0)
-        val middleware = Util.combineMiddlewares(
+        val middleware = CompositeMiddleware.combineMiddlewares(
                 Functions::flipMathMiddleware,
                 Functions::flipMathMiddleware
         )
@@ -19,9 +19,9 @@ class MiddlewareTests {
     @Test
     fun multiCombineMiddleware() {
         val store = Store(0)
-        val middleware = Util.combineMiddlewares(
+        val middleware = CompositeMiddleware.combineMiddlewares(
                 Functions::flipMathMiddleware,
-                Util.combineMiddlewares(
+                CompositeMiddleware.combineMiddlewares(
                         Functions::emptyMiddleware,
                         Functions::flipMathMiddleware
                 )

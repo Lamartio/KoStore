@@ -15,7 +15,14 @@ open class CompositeReducer<T> : (T, Any) -> T {
     override fun invoke(state: T, action: Any): T = reducer(state, action)
 
     fun add(reducer: (T, Any) -> T): CompositeReducer<T> = apply {
-        this.reducer = Util.combineReducers(this.reducer, reducer)
+        this.reducer = combineReducers(this.reducer, reducer)
+    }
+
+    companion object {
+
+        fun <T> combineReducers(previous: (T, Any) -> T, next: (T, Any) -> T): (T, Any) -> T =
+                { state, action -> previous(state, action).let { next(it, action) } }
+
     }
 
 }

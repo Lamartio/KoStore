@@ -9,7 +9,7 @@ class ReducerTests {
     @Test
     fun combineReducers() {
         var state = 1
-        val reducer = Util.combineReducers(Functions::emptyReducer, Functions::mathReducer)
+        val reducer = CompositeReducer.combineReducers(Functions::emptyReducer, Functions::mathReducer)
 
         reducer(state, "increment")
                 .also { state = it }
@@ -23,9 +23,9 @@ class ReducerTests {
     @Test
     fun multiCombineReducers() {
         var state = 1
-        val reducer = Util.combineReducers(
+        val reducer = CompositeReducer.combineReducers(
                 Functions::emptyReducer,
-                Util.combineReducers(Functions::mathReducer, Functions::mathReducer)
+                CompositeReducer.combineReducers(Functions::mathReducer, Functions::mathReducer)
         )
 
         reducer(state, "increment")

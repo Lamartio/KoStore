@@ -13,7 +13,7 @@ class ObserverTests {
             assertEquals(0, it)
             list.add(3)
         }
-        val observers = CompositeObservers<Int>()
+        val observers = CompositeObserver<Int>()
                 .add { list.add(1) }
                 .add { list.add(2) }
                 .add(observer)
