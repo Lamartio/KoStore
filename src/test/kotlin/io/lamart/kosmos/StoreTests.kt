@@ -42,14 +42,17 @@ class StoreTests {
 
     @Test
     fun reducerAndMiddleware3() {
+        var received = false
         val store = Store(0)
                 .addMiddleware(Functions::logMiddleware)
                 .addMiddleware(Functions::flipMathMiddleware)
                 .addReducer(Functions::mathReducer)
+                .addObserver { received = true }
 
         store.dispatch("increment")
 
         assertEquals(-1, store.state)
+        assertEquals(true, received)
     }
 
 }

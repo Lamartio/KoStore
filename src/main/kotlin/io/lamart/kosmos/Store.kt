@@ -1,10 +1,9 @@
 package io.lamart.kosmos
 
-import kotlin.properties.Delegates
-
 open class Store<T>(state: T) : (Any) -> Unit {
 
-    var state: T by Delegates.observable(state) { _, _, after -> observers(after) }
+    @Volatile
+    var state: T = state
         private set
 
     private var observers = CompositeObservers<T>()
@@ -16,7 +15,7 @@ open class Store<T>(state: T) : (Any) -> Unit {
     }
 
     override fun invoke(action: Any) {
-        middleware(this, action, { state = reducer(state, it) })
+        middleware(this, action, { reducer(state, it).also { state = it }.also(observers) })
     }
 
     fun dispatch(action: Any): Store<T> = apply { this(action) }
