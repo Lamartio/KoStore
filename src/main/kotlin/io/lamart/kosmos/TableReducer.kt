@@ -10,20 +10,22 @@ open class TableReducer<T>(init: TableReducer<T>.() -> Unit = {}) : (T, Any) -> 
 
     override fun invoke(state: T, action: Any): T = reducer(state, action)
 
-    fun anyState(): Action<T, T> = typedState<T> { true }
+    fun anyState(): Action<T, T> = state<T> { true }
 
-    fun state(statePredicate: T.() -> Boolean): Action<T, T> = typedState<T>(statePredicate)
+    fun state(statePredicate: T.() -> Boolean): Action<T, T> = state<T>(statePredicate)
 
-    fun <S : T> typedState(statePredicate: S.() -> Boolean = { true }): Action<T, S> = Action(statePredicate)
+    @JvmName("typedState")
+    fun <S : T> state(statePredicate: S.() -> Boolean = { true }): Action<T, S> = Action(statePredicate)
 
     inner class Action<out T, out S : T>(private val statePredicate: S.() -> Boolean) {
 
-        fun withAnyAction(): Result<S, Any> = withTypedAction<Any> { true }
+        fun withAnyAction(): Result<S, Any> = withAction<Any> { true }
 
         fun withAction(actionPredicate: S.(Any) -> Boolean): Result<S, Any> =
-                withTypedAction<Any>(actionPredicate)
+                withAction<Any>(actionPredicate)
 
-        fun <A> withTypedAction(actionPredicate: S.(A) -> Boolean = { true }): Result<S, A> =
+        @JvmName("withTypedAction")
+        fun <A> withAction(actionPredicate: S.(A) -> Boolean = { true }): Result<S, A> =
                 Result(statePredicate, actionPredicate, reducer, { reducer = it })
 
     }

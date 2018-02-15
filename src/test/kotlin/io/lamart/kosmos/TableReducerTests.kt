@@ -1,6 +1,5 @@
 package io.lamart.kosmos
 
-import io.lamart.kosmos.Store
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -16,8 +15,8 @@ class TableReducerTests {
     }
 
     val hornReducer = TableReducer<Horn> {
-        typedState<Horn.Idle>().withTypedAction<Honk.Start>().creates { Horn.Honking }
-        typedState<Horn.Honking>().withTypedAction<Honk.Stop>().creates { Horn.Honking }
+        state<Horn.Idle>().withTypedAction<Honk.Start>().creates { Horn.Honking }
+        state<Horn.Honking>().withTypedAction<Honk.Stop>().creates { Horn.Honking }
     }
 
     val steerReducer = TableReducer<Steer> {

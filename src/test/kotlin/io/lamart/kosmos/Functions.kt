@@ -11,9 +11,9 @@ internal object Functions {
                 else -> state
             }
 
-    fun emptyMiddleware(store: Store<Int>, action: Any, next: (Any) -> Unit) = next(action)
+    fun emptyMiddleware(store: StoreSource<Int>, action: Any, next: (Any) -> Unit) = next(action)
 
-    fun flipMathMiddleware(store: Store<Int>, action: Any, next: (Any) -> Unit) {
+    fun flipMathMiddleware(store: StoreSource<Int>, action: Any, next: (Any) -> Unit) {
         val newAction = when (action) {
             "increment" -> "decrement"
             "decrement" -> "increment"
@@ -23,12 +23,12 @@ internal object Functions {
         next(newAction)
     }
 
-    fun multiEmitMiddleware(store: Store<Int>, action: Any, next: (Any) -> Unit) {
+    fun multiEmitMiddleware(store: StoreSource<Int>, action: Any, next: (Any) -> Unit) {
         next(action)
         next(action)
     }
 
-    fun logMiddleware(store: Store<Int>, action: Any, next: (Any) -> Unit) {
+    fun logMiddleware(store: StoreSource<Int>, action: Any, next: (Any) -> Unit) {
         if (action is LogEntry) {
             next(action)
         } else {

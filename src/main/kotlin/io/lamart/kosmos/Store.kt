@@ -1,30 +1,40 @@
 package io.lamart.kosmos
 
-open class Store<T>(state: T) : (Any) -> Unit {
+interface StoreSource<out T> : (Any) -> Unit {
+
+    val state: T
+
+    operator fun invoke(): T
+
+}
+
+open class Store<T>(state: T) : StoreSource<T> {
 
     @Volatile
-    var state: T = state
-        private set
+    override var state: T = state
 
     private var observer = CompositeObserver<T>()
     private var middleware = CompositeMiddleware<T>()
     private var reducer = CompositeReducer<T>()
+    private var interceptor = CompositeInterceptor<T>(this)
 
     constructor(state: T, init: Store<T>.() -> Unit) : this(state) {
         init()
     }
 
+    override fun invoke(): T = state
+
     override fun invoke(action: Any) {
-        middleware(this, action, { reducer(state, it).also { state = it }.also(observer) })
+        middleware(interceptor, action, { reducer(state, it).also { state = it }.also(observer) })
     }
 
     fun dispatch(action: Any): Store<T> = apply { this(action) }
 
-    fun add(init: Store<T>.() -> Unit) : Store<T> = apply {
-        init()
-    }
+    fun add(init: Store<T>.() -> Unit): Store<T> = apply { init() }
 
-    fun addMiddleware(middleware: (Store<T>, Any, (Any) -> Unit) -> Unit): Store<T> =
+    fun addRouter(router: (StoreSource<T>) -> StoreSource<T>): Store<T> = apply { this.interceptor.add(router) }
+
+    fun addMiddleware(middleware: (StoreSource<T>, Any, (Any) -> Unit) -> Unit): Store<T> =
             apply { this.middleware.add(middleware) }
 
     fun addReducer(reducer: (T, Any) -> T): Store<T> = apply { this.reducer.add(reducer) }

@@ -1,10 +1,10 @@
 package io.lamart.kosmos
 
-open class CompositeMiddleware<T> : (Store<T>, Any, (Any) -> Unit) -> Unit {
+open class CompositeMiddleware<T> : (StoreSource<T>, Any, (Any) -> Unit) -> Unit {
 
-    private var middleware: (Store<T>, Any, (Any) -> Unit) -> Unit = { store, action, next -> next(action) }
+    private var middleware: (StoreSource<T>, Any, (Any) -> Unit) -> Unit = { store, action, next -> next(action) }
 
-    constructor(vararg middlewares: (Store<T>, Any, (Any) -> Unit) -> Unit) {
+    constructor(vararg middlewares: (StoreSource<T>, Any, (Any) -> Unit) -> Unit) {
         middlewares.forEach { add(it) }
     }
 
@@ -12,18 +12,18 @@ open class CompositeMiddleware<T> : (Store<T>, Any, (Any) -> Unit) -> Unit {
         init()
     }
 
-    override fun invoke(store: Store<T>, action: Any, next: (Any) -> Unit) = middleware(store, action, next)
+    override fun invoke(store: StoreSource<T>, action: Any, next: (Any) -> Unit) = middleware(store, action, next)
 
-    fun add(middleware: (Store<T>, Any, (Any) -> Unit) -> Unit): CompositeMiddleware<T> = apply {
+    fun add(middleware: (StoreSource<T>, Any, (Any) -> Unit) -> Unit): CompositeMiddleware<T> = apply {
         this.middleware = combineMiddlewares(this.middleware, middleware)
     }
 
     companion object {
 
         fun <T> combineMiddlewares(
-                previous: (Store<T>, Any, (Any) -> Unit) -> Unit,
-                next: (Store<T>, Any, (Any) -> Unit) -> Unit
-        ): (Store<T>, Any, (Any) -> Unit) -> Unit =
+                previous: (StoreSource<T>, Any, (Any) -> Unit) -> Unit,
+                next: (StoreSource<T>, Any, (Any) -> Unit) -> Unit
+        ): (StoreSource<T>, Any, (Any) -> Unit) -> Unit =
                 { getState, action, next ->
                     previous(getState, action, { action ->
                         next(getState, action, next)
