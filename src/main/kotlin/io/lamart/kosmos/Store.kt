@@ -1,13 +1,5 @@
 package io.lamart.kosmos
 
-interface StoreSource<out T> : (Any) -> Unit {
-
-    val state: T
-
-    operator fun invoke(): T
-
-}
-
 open class Store<T>(state: T) : StoreSource<T> {
 
     @Volatile
@@ -32,7 +24,7 @@ open class Store<T>(state: T) : StoreSource<T> {
 
     fun add(init: Store<T>.() -> Unit): Store<T> = apply { init() }
 
-    fun addRouter(router: (StoreSource<T>) -> StoreSource<T>): Store<T> = apply { this.interceptor.add(router) }
+    fun addInterceptor(router: (StoreSource<T>) -> StoreSource<T>): Store<T> = apply { this.interceptor.add(router) }
 
     fun addMiddleware(middleware: (StoreSource<T>, Any, (Any) -> Unit) -> Unit): Store<T> =
             apply { this.middleware.add(middleware) }
