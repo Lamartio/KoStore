@@ -1,9 +1,6 @@
 package io.lamart.kosmos
 
-open class Store<T>(state: T) : StoreSource<T> {
-
-    @Volatile
-    override var state: T = state
+open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
 
     private var observer = CompositeObserver<T>()
     private var middleware = CompositeMiddleware<T>()
