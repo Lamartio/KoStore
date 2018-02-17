@@ -15,18 +15,18 @@ class TableReducerTests {
     }
 
     val hornReducer = TableReducer<Horn> {
-        state<Horn.Idle>().withTypedAction<Honk.Start>().creates { Horn.Honking }
-        state<Horn.Honking>().withTypedAction<Honk.Stop>().creates { Horn.Honking }
+        state<Horn.Idle>().withAction<Honk.Start>().creates { Horn.Honking }
+        state<Horn.Honking>().withAction<Honk.Stop>().creates { Horn.Honking }
     }
 
     val steerReducer = TableReducer<Steer> {
-        anyState().withTypedAction<Turn>().creates { copy(rotation = getRotation(it)) }
+        anyState().withAction<Turn>().creates { copy(rotation = getRotation(it)) }
         anyState().withAnyAction().creates { copy(horn = hornReducer(horn, it)) }
     }
 
     val gearsReducer = TableReducer<Gears> {
-        state { current > -1 }.withTypedAction<Shift.Down>().creates { Gears(current - 1) }
-        state { current < 6 }.withTypedAction<Shift.Up>().creates { Gears(current + 1) }
+        state { current > -1 }.withAction<Shift.Down>().creates { Gears(current - 1) }
+        state { current < 6 }.withAction<Shift.Up>().creates { Gears(current + 1) }
     }
 
     val carReducer = TableReducer<Car> {

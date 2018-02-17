@@ -1,5 +1,7 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.util.Observer
+
 open class CompositeObserver<T> : (T) -> Unit {
 
     private var observers: MutableList<(T) -> Unit> = mutableListOf()
@@ -19,26 +21,15 @@ open class CompositeObserver<T> : (T) -> Unit {
         this.observer = observers
                 .apply { add(observer) }
                 .let { it as Iterable<(T) -> Unit> }
-                .let(::wrapObservers)
+                .let(Observer::wrap)
     }
 
     fun remove(observer: (T) -> Unit): CompositeObserver<T> = apply {
         this.observer = observers
                 .apply { remove(observer) }
                 .let { it as Iterable<(T) -> Unit> }
-                .let(::wrapObservers)
+                .let(Observer::wrap)
     }
 
-    companion object {
-
-        fun <T> wrapObservers(observers: Iterable<(T) -> Unit>): (T) -> Unit {
-            var result = { state: T -> }
-
-            observers.forEach { next -> result = result.let { previous -> { previous(it); next(it) } } }
-
-            return result
-        }
-
-    }
 
 }

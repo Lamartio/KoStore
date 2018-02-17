@@ -1,5 +1,6 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.util.Middleware
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -8,7 +9,7 @@ class MiddlewareTests {
     @Test
     fun combineMiddleware() {
         val store = Store(0)
-        val middleware = CompositeMiddleware.combineMiddlewares(
+        val middleware = Middleware.combine(
                 Functions::flipMathMiddleware,
                 Functions::flipMathMiddleware
         )
@@ -19,9 +20,9 @@ class MiddlewareTests {
     @Test
     fun multiCombineMiddleware() {
         val store = Store(0)
-        val middleware = CompositeMiddleware.combineMiddlewares(
+        val middleware = Middleware.combine(
                 Functions::flipMathMiddleware,
-                CompositeMiddleware.combineMiddlewares(
+                Middleware.combine(
                         Functions::emptyMiddleware,
                         Functions::flipMathMiddleware
                 )

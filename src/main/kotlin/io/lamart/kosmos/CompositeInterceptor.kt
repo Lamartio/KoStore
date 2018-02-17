@@ -1,5 +1,7 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.util.Interceptor
+
 class CompositeInterceptor<T>(private val root: StoreSource<T>) : StoreSource<T> {
 
     var router: (StoreSource<T>) -> StoreSource<T> = { it }
@@ -11,15 +13,6 @@ class CompositeInterceptor<T>(private val root: StoreSource<T>) : StoreSource<T>
     override fun invoke(action: Any) = router(root).invoke(action)
 
     fun add(router: (StoreSource<T>) -> StoreSource<T>): CompositeInterceptor<T> =
-            apply { this.router = combineInterceptors(this.router, router) }
-
-    companion object {
-
-        fun <T> combineInterceptors(
-                previous: (StoreSource<T>) -> StoreSource<T>,
-                next: (StoreSource<T>) -> StoreSource<T>
-        ): (StoreSource<T>) -> StoreSource<T> = { it.let(previous).let(next) }
-
-    }
+            apply { this.router = Interceptor.combine(this.router, router) }
 
 }
