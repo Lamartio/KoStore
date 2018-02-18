@@ -34,16 +34,19 @@ open class TableReducer<T>(init: TableReducer<T>.() -> Unit = {}) : (T, Any) -> 
             val statePredicate: S.() -> Boolean,
             val actionPredicate: S.(A) -> Boolean,
             val reducer: (T, Any) -> T,
-            val setReducer: ((T, Any) -> T) -> Unit
+            val setReducer: ((T, Any) -> T) -> Unit,
+            val result: TableReducer<T> = this@TableReducer
     )
 }
 
-inline fun <T, reified S : T, reified A : Any> TableReducer<T>.Result<S, A>.creates(crossinline creator: S.(A) -> T) =
-        setReducer { state, action ->
-            reducer(state, action).let { state ->
-                if (state is S && action is A && statePredicate(state) && actionPredicate(state, action))
-                    creator(state, action)
-                else
-                    state
+inline fun <T, reified S : T, reified A : Any> TableReducer<T>.Result<S, A>.creates(crossinline creator: S.(A) -> T): TableReducer<T> =
+        result.apply {
+            setReducer { state, action ->
+                reducer(state, action).let { state ->
+                    if (state is S && action is A && statePredicate(state) && actionPredicate(state, action))
+                        creator(state, action)
+                    else
+                        state
+                }
             }
         }
