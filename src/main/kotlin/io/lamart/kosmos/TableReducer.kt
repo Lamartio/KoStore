@@ -1,10 +1,12 @@
 package io.lamart.kosmos
 
-open class TableReducer<T>(init: TableReducer<T>.() -> Unit = {}) : (T, Any) -> T {
+open class TableReducer<T> : (T, Any) -> T {
 
     private var reducer: (T, Any) -> T = { state, action -> state }
 
-    init {
+    constructor()
+
+    constructor(init: TableReducer<T>.() -> Unit) {
         init()
     }
 
