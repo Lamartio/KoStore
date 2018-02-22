@@ -5,6 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/Kosmos.iml" filepath="$PROJECT_DIR$/Kosmos.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kosmos_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Kosmos_main.iml" group="Kosmos" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kosmos_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Kosmos_test.iml" group="Kosmos" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/buildSrc.iml" filepath="$PROJECT_DIR$/.idea/modules/buildSrc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/buildSrc_main.iml" filepath="$PROJECT_DIR$/.idea/modules/buildSrc_main.iml" group="buildSrc" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/buildSrc_test.iml" filepath="$PROJECT_DIR$/.idea/modules/buildSrc_test.iml" group="buildSrc" />
     </modules>
   </component>
 </project>
