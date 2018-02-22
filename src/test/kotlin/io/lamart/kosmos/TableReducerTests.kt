@@ -47,7 +47,7 @@ class TableReducerTests {
     @Test
     fun reducerInStore() {
         Car(Steer(Horn.Idle, 0), Gears(0))
-                .let (::Store)
+                .let(::Store)
                 .addReducer(carReducer)
                 .apply { dispatch(Honk.Start) }
                 .apply { assertEquals(state.steer.horn, Horn.Honking) }
