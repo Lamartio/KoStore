@@ -1,5 +1,6 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.util.CompositeObserver
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test

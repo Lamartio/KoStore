@@ -1,7 +1,5 @@
 package io.lamart.kosmos
 
-import io.lamart.kosmos.util.Middleware
-import io.lamart.kosmos.util.Reducer
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -26,6 +24,7 @@ class StoreUtilTests {
                 state += (action as Int)
             }
 
+            override fun dispatch(action: Any): StoreSource<Int> = apply { invoke(action) }
 
         }
         val middleware = Middleware.typed<Int, Int> { store, action, next -> println(action) }

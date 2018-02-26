@@ -1,8 +1,8 @@
-package io.lamart.kosmos
+package io.lamart.kosmos.util
 
-import io.lamart.kosmos.util.Reducer
+import io.lamart.kosmos.Reducer
 
-open class CompositeReducer<T> : (T, Any) -> T {
+open class CompositeReducer<T> : Reducer<T> {
 
     private var reducer: (T, Any) -> T = { state, action -> state }
 

@@ -1,10 +1,11 @@
-package io.lamart.kosmos
+package io.lamart.kosmos.util
 
-import io.lamart.kosmos.util.Middleware
+import io.lamart.kosmos.Middleware
+import io.lamart.kosmos.StoreSource
 
-open class CompositeMiddleware<T> : (StoreSource<T>, Any, (Any) -> Unit) -> Unit {
+open class CompositeMiddleware<T> : Middleware<T> {
 
-    private var middleware: (StoreSource<T>, Any, (Any) -> Unit) -> Unit = { store, action, next -> next(action) }
+    private var middleware: Middleware<T> = Middleware.from { store, action, next -> next(action) }
 
     constructor(vararg middlewares: (StoreSource<T>, Any, (Any) -> Unit) -> Unit) {
         middlewares.forEach { add(it) }

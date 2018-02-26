@@ -1,11 +1,16 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.util.CompositeInterceptor
+import io.lamart.kosmos.util.CompositeMiddleware
+import io.lamart.kosmos.util.CompositeObserver
+import io.lamart.kosmos.util.CompositeReducer
+
 open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
 
-    private var observer = CompositeObserver<T>()
-    private var middleware = CompositeMiddleware<T>()
-    private var reducer = CompositeReducer<T>()
-    private var interceptor = CompositeInterceptor<T>(this)
+    private val observer = CompositeObserver<T>()
+    private val middleware = CompositeMiddleware<T>()
+    private val reducer = CompositeReducer<T>()
+    private val interceptor = CompositeInterceptor<T>()
 
     constructor(state: T, init: Store<T>.() -> Unit) : this(state) {
         init()
@@ -13,11 +18,14 @@ open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
 
     override fun invoke(): T = state
 
-    override fun invoke(action: Any) {
-        middleware(interceptor, action, { reducer(state, it).also { state = it }.also(observer) })
-    }
+    override fun invoke(action: Any) =
+            middleware(
+                    interceptor(this),
+                    action,
+                    { reducer(state, it).also { state = it }.also(observer) }
+            )
 
-    fun dispatch(action: Any): Store<T> = apply { this(action) }
+    override fun dispatch(action: Any): StoreSource<T> = apply { this(action) }
 
     fun add(init: Store<T>.() -> Unit): Store<T> = apply { init() }
 

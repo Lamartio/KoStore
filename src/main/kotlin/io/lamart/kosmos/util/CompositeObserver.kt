@@ -1,14 +1,14 @@
-package io.lamart.kosmos
+package io.lamart.kosmos.util
 
-import io.lamart.kosmos.util.Observer
+import io.lamart.kosmos.Observer
 
-open class CompositeObserver<T> : (T) -> Unit {
+open class CompositeObserver<T> : Observer<T> {
 
-    private var observers: MutableList<(T) -> Unit> = mutableListOf()
-    private var observer: (T) -> Unit = {}
+    private val observers: MutableList<(T) -> Unit> = mutableListOf()
+    private var observer: Observer<T> = Observer.from {}
 
     constructor(vararg observers: (T) -> Unit) {
-        this.observers.addAll(observers)
+        observers.forEach { add(it) }
     }
 
     constructor(init: CompositeObserver<T>.() -> Unit) {
@@ -20,15 +20,13 @@ open class CompositeObserver<T> : (T) -> Unit {
     fun add(observer: (T) -> Unit): CompositeObserver<T> = apply {
         this.observer = observers
                 .apply { add(observer) }
-                .let { it as Iterable<(T) -> Unit> }
-                .let(Observer::wrap)
+                .let { Observer.wrap(it) }
     }
 
     fun remove(observer: (T) -> Unit): CompositeObserver<T> = apply {
         this.observer = observers
                 .apply { remove(observer) }
-                .let { it as Iterable<(T) -> Unit> }
-                .let(Observer::wrap)
+                .let { Observer.wrap(it) }
     }
 
 
