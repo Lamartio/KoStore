@@ -6,6 +6,4 @@ interface StoreSource<out T> : (Any) -> Unit {
 
     operator fun invoke(): T = state
 
-    fun dispatch(action: Any): StoreSource<T>
-
 }

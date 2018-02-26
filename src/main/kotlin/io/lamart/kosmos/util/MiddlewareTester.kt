@@ -19,8 +19,6 @@ class MiddlewareTester<T> : ((List<Any>) -> Unit) -> Unit {
 
             override fun invoke(action: Any) = middleware(this, action, { actions.add(it) })
 
-            override fun dispatch(action: Any): StoreSource<T> = apply { invoke(action) }
-
         }
     }
 

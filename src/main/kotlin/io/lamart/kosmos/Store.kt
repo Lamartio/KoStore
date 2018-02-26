@@ -25,7 +25,7 @@ open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
                     { reducer(state, it).also { state = it }.also(observer) }
             )
 
-    override fun dispatch(action: Any): StoreSource<T> = apply { this(action) }
+    fun dispatch(action: Any): Store<T> = apply { this(action) }
 
     fun add(init: Store<T>.() -> Unit): Store<T> = apply { init() }
 
