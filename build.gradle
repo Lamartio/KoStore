@@ -10,7 +10,7 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
-version = "0.9.2"
+version = "0.9.4"
 
 // In this section you declare where to find the dependencies of your project
 repositories {

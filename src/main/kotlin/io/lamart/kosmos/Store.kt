@@ -1,6 +1,8 @@
 package io.lamart.kosmos
 
 
+typealias StoreInitializer<T> = Store<T>.() -> Unit
+
 open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
 
     var middleware: Middleware<T> = { _, action, next -> next(action) }
@@ -10,7 +12,7 @@ open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
     var observer: Observer<T> = { }
         private set
 
-    constructor(state: T, init: Store<T>.() -> Unit) : this(state) {
+    constructor(state: T, init: StoreInitializer<T>) : this(state) {
         init()
     }
 
@@ -21,7 +23,7 @@ open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
                     { reducer(state, it).also { state = it }.also(observer) }
             )
 
-    fun add(init: Store<T>.() -> Unit): Store<T> = apply { init() }
+    fun add(init: StoreInitializer<T>): Store<T> = apply { init() }
 
     fun addReducer(reducer: Reducer<T>): Store<T> = apply { this.reducer = combine(this.reducer, reducer) }
 
