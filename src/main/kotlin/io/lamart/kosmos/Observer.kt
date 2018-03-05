@@ -1,30 +1,13 @@
 package io.lamart.kosmos
 
-fun <T> ((T) -> Unit).toObserver() = Observer.from(this)
+import io.lamart.kosmos.util.aggregate
 
-interface Observer<in T> : (T) -> Unit {
+typealias Observer<T> = (T) -> Unit
 
-    companion object {
+fun <T> combine(vararg items: Observer<T>): Observer<T> = aggregate(items, ::combine) ?: {}
 
-        fun <T> from(observer: (T) -> Unit): Observer<T> = object : Observer<T> {
-            override fun invoke(state: T) = observer(state)
-        }
+fun <T> combine(items: Iterable<Observer<T>>): Observer<T> = aggregate(items, ::combine) ?: {}
 
-        fun <T> wrap(vararg observers: (T) -> Unit): Observer<T> = wrap(observers.asIterable())
+fun <T> combine(items: Iterator<Observer<T>>): Observer<T> = aggregate(items, ::combine) ?: {}
 
-        fun <T> wrap(observers: Iterable<(T) -> Unit>): Observer<T> {
-            var result = from { state: T -> }
-
-            observers.forEach { next -> result = result.let { previous -> combine(previous, next) } }
-
-            return result
-        }
-
-        fun <T> combine(
-                previous: (T) -> Unit,
-                next: (T) -> Unit
-        ): Observer<T> = from { previous(it); next(it) }
-
-    }
-
-}
+fun <T> combine(previous: Observer<T>, next: Observer<T>): Observer<T> = { previous(it); next(it) }

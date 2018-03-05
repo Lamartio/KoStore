@@ -1,43 +1,66 @@
 package io.lamart.kosmos
 
-import io.lamart.kosmos.util.CompositeInterceptor
-import io.lamart.kosmos.util.CompositeMiddleware
-import io.lamart.kosmos.util.CompositeObserver
-import io.lamart.kosmos.util.CompositeReducer
 
 open class Store<T>(@Volatile override var state: T) : StoreSource<T> {
 
-    private val observer = CompositeObserver<T>()
-    private val middleware = CompositeMiddleware<T>()
-    private val reducer = CompositeReducer<T>()
-    private val interceptor = CompositeInterceptor<T>()
+    var middleware: Middleware<T> = { _, action, next -> next(action) }
+        private set
+    var reducer: Reducer<T> = { state, _ -> state }
+        private set
+    var observer: Observer<T> = { }
+        private set
 
     constructor(state: T, init: Store<T>.() -> Unit) : this(state) {
         init()
     }
 
-    override fun invoke(): T = state
-
-    override fun invoke(action: Any) =
+    override fun dispatch(action: Any) =
             middleware(
-                    interceptor(this),
+                    this,
                     action,
                     { reducer(state, it).also { state = it }.also(observer) }
             )
 
-    fun dispatch(action: Any): Store<T> = apply { this(action) }
-
     fun add(init: Store<T>.() -> Unit): Store<T> = apply { init() }
 
-    fun addInterceptor(router: (StoreSource<T>) -> StoreSource<T>): Store<T> = apply { this.interceptor.add(router) }
+    fun addReducer(reducer: Reducer<T>): Store<T> = apply { this.reducer = combine(this.reducer, reducer) }
 
-    fun addMiddleware(middleware: (StoreSource<T>, Any, (Any) -> Unit) -> Unit): Store<T> =
-            apply { this.middleware.add(middleware) }
+    fun wrapReducer(wrap: (Reducer<T>) -> Reducer<T>): Store<T> = apply { reducer = wrap(reducer) }
 
-    fun addReducer(reducer: (T, Any) -> T): Store<T> = apply { this.reducer.add(reducer) }
+    operator fun Reducer<T>.plusAssign(reducer: Reducer<T>) {
+        addReducer(reducer)
+    }
 
-    fun addObserver(observer: (T) -> Unit): Store<T> = apply { this.observer.add(observer) }
+    operator fun Reducer<T>.plusAssign(wrap: (Reducer<T>) -> Reducer<T>) {
+        wrapReducer(wrap)
+    }
 
-    fun removeObserver(observer: (T) -> Unit): Store<T> = apply { this.observer.remove(observer) }
+    fun addMiddleware(middleware: Middleware<T>): Store<T> = apply {
+        this.middleware = combine(this.middleware, middleware)
+    }
+
+    fun wrapMiddleware(wrap: (Middleware<T>) -> Middleware<T>): Store<T> = apply { middleware = wrap(middleware) }
+
+    operator fun Middleware<T>.plusAssign(middleware: Middleware<T>) {
+        addMiddleware(middleware)
+    }
+
+    operator fun Middleware<T>.plusAssign(wrap: (Middleware<T>) -> Middleware<T>) {
+        wrapMiddleware(wrap)
+    }
+
+    fun addObserver(observer: Observer<T>): Store<T> = apply { this.observer = combine(this.observer, observer) }
+
+    fun wrapObserver(wrap: (Observer<T>) -> Observer<T>): Store<T> = apply { observer = wrap(observer) }
+
+    @JvmName("addObserverPlusAssign")
+    operator fun Observer<T>.plusAssign(observer: Observer<T>) {
+        addObserver(observer)
+    }
+
+    @JvmName("wrapObserverPlusAssign")
+    operator fun Observer<T>.plusAssign(wrap: (Observer<T>) -> Observer<T>) {
+        wrapObserver(wrap)
+    }
 
 }

@@ -5,54 +5,40 @@ import org.junit.Test
 
 class StoreTests {
 
+    private val reducer = { state: Int, action: Any ->
+        when (action) {
+            "increment" -> state + 1
+            "decrement" -> state - 1
+            else -> state
+        }
+    }
+
+    private val middleware: Middleware<Int> = { store, action, next ->
+        val nextAction = when (action) {
+            "increment" -> "decrement"
+            "decrement" -> "increment"
+            else -> action
+        }
+
+        next(nextAction)
+    }
+
     @Test
     fun reducer() {
-        val store = Store(0).addReducer(Functions::mathReducer)
+        val store = Store(0) { reducer += this@StoreTests.reducer }
 
         store.dispatch("increment")
-        store.dispatch("increment")
-        store.dispatch("increment")
-
-        assertEquals(3, store.state)
+        assertEquals(1, store.state)
     }
 
     @Test
-    fun reducerAndMiddleware1() {
+    fun middlewareAndReducer() {
         val store = Store(0)
-                .addMiddleware(Functions::flipMathMiddleware)
-                .addReducer(Functions::mathReducer)
+                .addMiddleware(middleware)
+                .addReducer(reducer)
 
         store.dispatch("increment")
-        store.dispatch("increment")
-
-        assertEquals(-2, store.state)
-    }
-
-    @Test
-    fun reducerAndMiddleware2() {
-        val store = Store(0)
-                .addMiddleware(Functions::multiEmitMiddleware)
-                .addMiddleware(Functions::flipMathMiddleware)
-                .addReducer(Functions::mathReducer)
-
-        store.dispatch("increment")
-
-        assertEquals(-2, store.state)
-    }
-
-    @Test
-    fun reducerAndMiddleware3() {
-        var received = false
-        val store = Store(0)
-                .addMiddleware(Functions::logMiddleware)
-                .addMiddleware(Functions::flipMathMiddleware)
-                .addReducer(Functions::mathReducer)
-                .addObserver { received = true }
-
-        store.dispatch("increment")
-
         assertEquals(-1, store.state)
-        assertEquals(true, received)
     }
 
 }

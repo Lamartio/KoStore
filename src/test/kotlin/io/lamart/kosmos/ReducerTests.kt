@@ -1,53 +1,58 @@
 package io.lamart.kosmos
 
-import io.lamart.kosmos.util.CompositeReducer
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 
 class ReducerTests {
 
-    @Test
-    fun combineReducers() {
-        val reducer = Reducer.combine(Functions::emptyReducer, Functions::mathReducer)
-
-        reducer(1, "increment").also { assertEquals(2, it) }
-        reducer(2, "decrement").also { assertEquals(1, it) }
+    private val reducer = { state: Int, action: Any ->
+        when (action) {
+            "increment" -> state + 1
+            "decrement" -> state - 1
+            else -> state
+        }
     }
 
     @Test
-    fun multiCombineReducers() {
-        val reducer = Reducer.combine(
-                Functions::emptyReducer,
-                Reducer.combine(Functions::mathReducer, Functions::mathReducer)
-        )
-
-        reducer(1, "increment").also { assertEquals(3, it) }
-        reducer(3, "decrement").also { assertEquals(1, it) }
+    fun reducer() {
+        reducer(0, "increment") == 1
+        reducer(0, "decrement") == -1
+        reducer(0, "anything") == 0
     }
 
     @Test
-    fun compositeReducer() {
-        val reducer = CompositeReducer(
-                Functions::mathReducer,
-                Functions::emptyReducer,
-                Functions::mathReducer
-        )
-
-        reducer(1, "increment").also { assertEquals(3, it) }
-        reducer(3, "decrement").also { assertEquals(1, it) }
-    }
+    fun combineReducers() =
+            combine(reducer, reducer)
+                    .run { invoke(0, "increment") }
+                    .let { assertEquals(2, it) }
 
     @Test
-    fun complexCompositeReducer() {
-        val reducer = CompositeReducer(
-                Functions::mathReducer,
-                Functions::mathReducer,
-                CompositeReducer(Functions::emptyReducer, Functions::mathReducer)
-        )
+    fun combineReducersVarargs() =
+            combine(reducer, reducer, reducer)
+                    .run { invoke(0, "increment") }
+                    .let { assertEquals(3, it) }
 
-        reducer(1, "increment").also { assertEquals(4, it) }
-        reducer(4, "decrement").also { assertEquals(1, it) }
+    @Test
+    fun combineReducersIterable() =
+            listOf(reducer, reducer, reducer)
+                    .let { combine(it) }
+                    .run { invoke(0, "increment") }
+                    .let { assertEquals(3, it) }
+
+    @Test
+    fun combineReducersIterator() =
+            listOf(reducer, reducer, reducer)
+                    .iterator()
+                    .let { combine(it) }
+                    .run { invoke(0, "increment") }
+                    .let { assertEquals(3, it) }
+
+    @Test
+    fun typedReducer() {
+        typed { state: Int, action: String -> reducer(state, action) }
+                .invoke(0, "increment")
+                .also { assertEquals(1, it) }
     }
 
 }

@@ -1,6 +1,8 @@
-package io.lamart.kosmos
+package io.lamart.kosmos.util
 
-open class TableReducer<T> : (T, Any) -> T {
+import io.lamart.kosmos.Reducer
+
+open class TableReducer<T> : Reducer<T> {
 
     private var reducer: (T, Any) -> T = { state, action -> state }
 
@@ -52,3 +54,4 @@ inline fun <T, reified S : T, reified A : Any> TableReducer<T>.Result<S, A>.crea
                 }
             }
         }
+
