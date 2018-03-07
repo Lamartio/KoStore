@@ -1,11 +1,12 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.input.IntWrapper
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class StoreTests {
 
-    private val reducer = { state: Int, action: Any ->
+    private val mathReducer = { state: Int, action: Any ->
         when (action) {
             "increment" -> state + 1
             "decrement" -> state - 1
@@ -13,7 +14,7 @@ class StoreTests {
         }
     }
 
-    private val middleware: Middleware<Int> = { store, action, next ->
+    private val flipMathMiddleware: Middleware<Int> = { _, _, action, next ->
         val nextAction = when (action) {
             "increment" -> "decrement"
             "decrement" -> "increment"
@@ -25,20 +26,34 @@ class StoreTests {
 
     @Test
     fun reducer() {
-        val store = Store(0) { reducer += this@StoreTests.reducer }
+        val store = Store(0).apply { addReducer(mathReducer) }
 
         store.dispatch("increment")
-        assertEquals(1, store.state)
+        assertEquals(1, store.getState())
     }
 
     @Test
     fun middlewareAndReducer() {
-        val store = Store(0)
-                .addMiddleware(middleware)
-                .addReducer(reducer)
+        val store = Store(0).apply {
+            addMiddleware(flipMathMiddleware)
+            addReducer(mathReducer)
+        }
 
         store.dispatch("increment")
-        assertEquals(-1, store.state)
+        assertEquals(-1, store.getState())
+    }
+
+    @Test
+    fun compose() {
+        val store = Store(IntWrapper()) {
+            compose({ it.number }, { copy(number = it) }) {
+                addMiddleware(flipMathMiddleware)
+                addReducer(mathReducer)
+            }
+        }
+
+        store.dispatch("decrement")
+        assertEquals(1, store.getState().number)
     }
 
 }

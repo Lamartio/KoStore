@@ -1,5 +1,6 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.input.IntWrapper
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -22,37 +23,17 @@ class ReducerTests {
     }
 
     @Test
-    fun combineReducers() =
-            combine(reducer, reducer)
-                    .run { invoke(0, "increment") }
-                    .let { assertEquals(2, it) }
-
-    @Test
-    fun combineReducersVarargs() =
-            combine(reducer, reducer, reducer)
-                    .run { invoke(0, "increment") }
-                    .let { assertEquals(3, it) }
-
-    @Test
-    fun combineReducersIterable() =
-            listOf(reducer, reducer, reducer)
-                    .let { combine(it) }
-                    .run { invoke(0, "increment") }
-                    .let { assertEquals(3, it) }
-
-    @Test
-    fun combineReducersIterator() =
-            listOf(reducer, reducer, reducer)
-                    .iterator()
-                    .let { combine(it) }
-                    .run { invoke(0, "increment") }
-                    .let { assertEquals(3, it) }
-
-    @Test
     fun typedReducer() {
-        typed { state: Int, action: String -> reducer(state, action) }
+        filter { state: Int, action: String -> reducer(state, action) }
                 .invoke(0, "increment")
                 .also { assertEquals(1, it) }
     }
 
+    @Test
+    fun compose() {
+        val wrapperReducer: Reducer<IntWrapper> = reducer.compose({ it.number }, { copy(number = it) })
+        val value = wrapperReducer(IntWrapper(0), "increment")
+
+        assertEquals(1, value.number)
+    }
 }

@@ -1,4 +1,4 @@
-package io.lamart.kosmos
+package io.lamart.kosmos.input
 
 import io.lamart.kosmos.util.TableReducer
 import io.lamart.kosmos.util.creates

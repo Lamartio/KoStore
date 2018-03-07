@@ -1,5 +1,6 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.input.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -14,14 +15,16 @@ class TableReducerTests {
 
     @Test
     fun reducerInStore() {
-        Car().let(::Store)
-                .addReducer(carReducer)
-                .apply { dispatch(Turn.Right(20)) }
-                .apply { assertEquals(state.steer.rotation, 20) }
-                .apply { dispatch(Honk.Start) }
-                .apply { assertEquals(state.steer.horn, Horn.Honking) }
-                .apply { dispatch(Shift.Up) }
-                .apply { assertEquals(state.gears.current, 1) }
+        Car().let { Store(it) { addReducer(carReducer) } }.apply {
+            dispatch(Turn.Right(20))
+            assertEquals(getState().steer.rotation, 20)
+
+            dispatch(Honk.Start)
+            assertEquals(getState().steer.horn, Horn.Honking)
+
+            dispatch(Shift.Up)
+            assertEquals(getState().gears.current, 1)
+        }
     }
 
 }

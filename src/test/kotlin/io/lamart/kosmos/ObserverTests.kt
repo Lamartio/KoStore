@@ -1,5 +1,6 @@
 package io.lamart.kosmos
 
+import io.lamart.kosmos.input.IntWrapper
 import io.lamart.kosmos.util.ListObserver
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -13,7 +14,7 @@ class ObserverTests {
     @Test
     fun addObserver() {
         Store(0)
-                .addObserver { assertEquals(it, 0) }
+                .apply { addObserver { assertEquals(it, 0) } }
                 .apply { dispatch("") }
     }
 
@@ -27,7 +28,7 @@ class ObserverTests {
         ListObserver<Int>()
                 .apply { add { hits++ } }
                 .apply { add { hits++ } }
-                .let(Store(0)::addObserver)
+                .let { Store(0) { addObserver(it) } }
                 .dispatch("")
 
         assertEquals(2, hits)
@@ -43,30 +44,11 @@ class ObserverTests {
     }
 
     @Test
-    fun combineObserversVarargs() {
-        var hits = 0
-        val observer: Observer<Int> = { hits++ }
+    fun mapTest() {
+        val intObserver: Observer<Int> = { assertEquals(0, it) }
+        val wrapperObserver: Observer<IntWrapper> = intObserver.compose { it.number }
 
-        combine(observer, observer, observer).invoke(0)
-        assertEquals(3, hits)
-    }
-
-    @Test
-    fun combineObserversIterable() {
-        var hits = 0
-        val observer: Observer<Int> = { hits++ }
-
-        combine(listOf(observer, observer, observer)).invoke(0)
-        assertEquals(3, hits)
-    }
-
-    @Test
-    fun combineObserversIterator() {
-        var hits = 0
-        val observer: Observer<Int> = { hits++ }
-
-        combine(listOf(observer, observer, observer).iterator()).invoke(0)
-        assertEquals(3, hits)
+        wrapperObserver(IntWrapper(0))
     }
 
 }
