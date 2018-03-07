@@ -3,22 +3,22 @@ package io.lamart.kosmos
 
 interface StoreInitializer<T> {
 
-    fun addReducer(reducer: Reducer<T>)
+    infix fun addMiddleware(middleware: Middleware<T>)
 
-    fun addMiddleware(middleware: Middleware<T>)
+    infix fun addReducer(reducer: Reducer<T>)
 
 }
 
-fun <I, O> StoreInitializer<O>.compose(get: (O) -> I, set: O.(I) -> O, init: StoreInitializer<I>.() -> Unit) =
+fun <T, R> StoreInitializer<T>.compose(get: (T) -> R, set: T.(R) -> T, init: StoreInitializer<R>.() -> Unit) =
         compose(get, set).run(init)
 
-fun <I, O> StoreInitializer<O>.compose(get: (O) -> I, create: O.(I) -> O): StoreInitializer<I> = let { context ->
-    object : StoreInitializer<I> {
+fun <T, R> StoreInitializer<T>.compose(get: (T) -> R, create: T.(R) -> T): StoreInitializer<R> = let { context ->
+    object : StoreInitializer<R> {
 
-        override fun addReducer(reducer: Reducer<I>) =
+        override fun addReducer(reducer: Reducer<R>) =
                 reducer.compose(get, create).let(context::addReducer)
 
-        override fun addMiddleware(middleware: Middleware<I>) =
+        override fun addMiddleware(middleware: Middleware<R>) =
                 middleware.compose(get).let(context::addMiddleware)
 
     }

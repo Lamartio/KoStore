@@ -9,6 +9,8 @@ typealias Middleware<T> = (
         next: (Any) -> Unit
 ) -> Unit
 
+fun <T> middleware(): Middleware<T> = { _, _, action, next -> next(action) }
+
 fun <T> combine(
         previous: Middleware<T>,
         next: Middleware<T>
@@ -27,8 +29,8 @@ fun <T> after(middleware: Middleware<T>): Middleware<T> =
             middleware(getState, dispatch, action, next)
         }
 
-fun <I, O> Middleware<O>.compose(get: (I) -> O): Middleware<I> = { getState, dispatch, action, next ->
-    invoke(
+fun <T, R> Middleware<T>.compose(get: (R) -> T): Middleware<R> = { getState, dispatch, action, next ->
+    this.invoke(
             { getState().let(get) },
             dispatch,
             action,
