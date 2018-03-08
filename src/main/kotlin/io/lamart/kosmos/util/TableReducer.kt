@@ -4,7 +4,7 @@ import io.lamart.kosmos.Reducer
 
 open class TableReducer<T> : Reducer<T> {
 
-    private var reducer: (T, Any) -> T = { state, action -> state }
+    private var reducer: (T, Any) -> T = { state, _ -> state }
 
     constructor()
 

@@ -30,7 +30,7 @@ fun <T> after(middleware: Middleware<T>): Middleware<T> =
         }
 
 fun <T, R> Middleware<T>.compose(get: (R) -> T): Middleware<R> = { getState, dispatch, action, next ->
-    this.invoke(
+    invoke(
             { getState().let(get) },
             dispatch,
             action,
