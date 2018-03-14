@@ -1,4 +1,4 @@
-package io.lamart.kosmos
+package io.lamart.kostore
 
 
 open class Store<T>(private var state: T) : StoreSource<T>, StoreInitializer<T> {

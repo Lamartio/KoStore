@@ -1,4 +1,4 @@
-package io.lamart.kosmos.util
+package io.lamart.kostore.util
 
 fun <T> aggregate(items: Array<T>, combiner: (T, T) -> T): T? = aggregate(items.iterator(), combiner)
 

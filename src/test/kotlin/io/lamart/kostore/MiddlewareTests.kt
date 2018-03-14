@@ -1,7 +1,7 @@
-package io.lamart.kosmos
+package io.lamart.kostore
 
-import io.lamart.kosmos.input.IntWrapper
-import io.lamart.kosmos.util.test
+import io.lamart.kostore.input.IntWrapper
+import io.lamart.kostore.util.test
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

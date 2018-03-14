@@ -6,6 +6,8 @@
       <module name="buildSrc_test" target="1.8" />
       <module name="Kosmos_main" target="1.8" />
       <module name="Kosmos_test" target="1.8" />
+      <module name="KoStore_main" target="1.8" />
+      <module name="KoStore_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

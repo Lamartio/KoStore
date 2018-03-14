@@ -1,4 +1,4 @@
-package io.lamart.kosmos
+package io.lamart.kostore
 
 typealias Reducer<T> = (T, Any) -> T
 

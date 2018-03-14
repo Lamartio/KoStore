@@ -1,6 +1,6 @@
-package io.lamart.kosmos.util
+package io.lamart.kostore.util
 
-import io.lamart.kosmos.Middleware
+import io.lamart.kostore.Middleware
 
 fun <T> Middleware<T>.test() = MiddlewareTester(null, this)
 fun <T> Middleware<T>.test(state: T) = MiddlewareTester(state, this)

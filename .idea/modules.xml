@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kosmos.iml" filepath="$PROJECT_DIR$/.idea/modules/Kosmos.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kosmos_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Kosmos_main.iml" group="Kosmos" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Kosmos_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Kosmos_test.iml" group="Kosmos" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KoStore.iml" filepath="$PROJECT_DIR$/.idea/modules/KoStore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KoStore_main.iml" filepath="$PROJECT_DIR$/.idea/modules/KoStore_main.iml" group="KoStore" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KoStore_test.iml" filepath="$PROJECT_DIR$/.idea/modules/KoStore_test.iml" group="KoStore" />
     </modules>
   </component>
 </project>

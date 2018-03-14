@@ -1,6 +1,6 @@
-package io.lamart.kosmos.util
+package io.lamart.kostore.util
 
-import io.lamart.kosmos.Reducer
+import io.lamart.kostore.Reducer
 
 open class TableReducer<T> : Reducer<T> {
 

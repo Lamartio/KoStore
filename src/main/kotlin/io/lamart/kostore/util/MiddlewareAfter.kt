@@ -1,6 +1,6 @@
-package io.lamart.kosmos.util
+package io.lamart.kostore.util
 
-import io.lamart.kosmos.Middleware
+import io.lamart.kostore.Middleware
 
 class MiddlewareAfter<T> internal constructor(private val before: Middleware<T>) : Middleware<T> {
 

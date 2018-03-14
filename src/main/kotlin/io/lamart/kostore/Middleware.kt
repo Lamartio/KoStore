@@ -1,6 +1,6 @@
-package io.lamart.kosmos
+package io.lamart.kostore
 
-import io.lamart.kosmos.util.MiddlewareAfter
+import io.lamart.kostore.util.MiddlewareAfter
 
 typealias Middleware<T> = (
         getState: () -> T,

@@ -1,6 +1,6 @@
-package io.lamart.kosmos.util
+package io.lamart.kostore.util
 
-import io.lamart.kosmos.Observer
+import io.lamart.kostore.Observer
 
 open class ListObserver<T>(list: MutableList<Observer<T>> = ArrayList()) : MutableList<Observer<T>> by list, Observer<T> {
 
