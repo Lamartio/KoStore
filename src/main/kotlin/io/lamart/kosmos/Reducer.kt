@@ -13,8 +13,8 @@ inline fun <T, reified A> filter(crossinline reducer: (T, A) -> T): Reducer<T> =
             else state
         }
 
-fun <T, R> Reducer<T>.compose(get: (R) -> T, set: R.(T) -> R): Reducer<R> = { state: R, action: Any ->
-    get(state)
+fun <T, R> Reducer<T>.compose(map: (R) -> T, reduce: R.(T) -> R): Reducer<R> = { state: R, action: Any ->
+    map(state)
             .let { invoke(it, action) }
-            .let { state.set(it) }
+            .let { state.reduce(it) }
 }
