@@ -8,4 +8,6 @@ interface StoreSource<out T> {
 
     infix fun addObserver(observer: Observer<T>)
 
+    operator fun Observer<T>.unaryPlus() = addObserver(this)
+
 }
