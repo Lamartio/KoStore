@@ -25,7 +25,9 @@ class MiddlewareTests {
         flipMathMiddleware
                 .test()
                 .dispatch("increment")
-                .invoke { assertEquals("decrement", it.first()) }
+                .invoke()
+                .run { results }
+                .also { assertEquals("decrement", it.first()) }
     }
 
     @Test
@@ -33,7 +35,9 @@ class MiddlewareTests {
         combine(flipMathMiddleware, flipMathMiddleware)
                 .test()
                 .dispatch("increment")
-                .invoke { assertEquals("increment", it.first()) }
+                .invoke()
+                .run { results }
+                .also { assertEquals("increment", it.first()) }
     }
 
     @Test
@@ -78,7 +82,9 @@ class MiddlewareTests {
         wrapperMiddleware
                 .test()
                 .dispatch("increment")
-                .invoke { assertEquals("decrement", it.first()) }
+                .invoke()
+                .run { results }
+                .also { assertEquals("decrement", it.first()) }
     }
 
 }
