@@ -14,7 +14,13 @@ class MiddlewareTester<T>(private val state: T?, private val middleware: Middlew
     fun dispatch(action: Any): MiddlewareTester<T> = apply { actions.add(action) }
 
     operator fun invoke(): MiddlewareTester<T> = apply {
-        actions.forEach { middleware({ state!! }, { dispatches.add(it) }, it, { results.add(it) }) }
+        actions.forEach {
+            middleware(
+                    { state!! },
+                    { dispatches.add(it) },
+                    it,
+                    { results.add(it) })
+        }
         actions.clear()
     }
 
