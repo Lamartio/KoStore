@@ -1,7 +1,7 @@
 package io.lamart.kostore
 
 
-open class Store<T>(private var state: T) : StoreSource<T>, StoreInitializer<T> {
+open class Store<T>(private var state: T) : StoreInitializer<T> {
 
     private var middleware: Middleware<T> = middleware()
     private var reducer: Reducer<T> = reducer()
@@ -11,17 +11,16 @@ open class Store<T>(private var state: T) : StoreSource<T>, StoreInitializer<T> 
         init()
     }
 
-    override fun getState(): T = state
+    fun getState(): T = state
 
-    @Synchronized
-    override infix fun dispatch(action: Any): Unit = middleware(
+    infix fun dispatch(action: Any): Unit = middleware(
             ::getState,
             ::dispatch,
             action,
             { reducer(state, it).also { state = it }.also(observer) }
     )
 
-    override infix fun addObserver(observer: Observer<T>) {
+    infix fun addObserver(observer: Observer<T>) {
         this.observer = combine(this.observer, observer)
     }
 
