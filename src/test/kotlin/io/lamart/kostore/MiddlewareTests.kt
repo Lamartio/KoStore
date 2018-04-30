@@ -1,7 +1,7 @@
 package io.lamart.kostore
 
 import io.lamart.kostore.input.IntWrapper
-import io.lamart.kostore.util.test
+import io.lamart.kostore.utils.test
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -44,10 +44,10 @@ class MiddlewareTests {
     fun beforeMiddleware() {
         val list = mutableListOf<String>()
 
-        before<Int>({ _, _, _, _ -> list.add("before") })
+        beforeNext<Int>({ _, _, _, _ -> list.add("beforeNext") })
                 .invoke(::state, ::dispatch, "increment", { list.add("next") })
 
-        assertEquals("before", list[0])
+        assertEquals("beforeNext", list[0])
         assertEquals("next", list[1])
     }
 
@@ -55,24 +55,24 @@ class MiddlewareTests {
     fun afterMiddleware() {
         val list = mutableListOf<String>()
 
-        after<Int>({ _, _, _, _ -> list.add("after") })
+        afterNext<Int>({ _, _, _, _ -> list.add("afterNext") })
                 .invoke(::state, ::dispatch, "increment", { list.add("next") })
 
         assertEquals("next", list[0])
-        assertEquals("after", list[1])
+        assertEquals("afterNext", list[1])
     }
 
     @Test
     fun beforeAndAfterMiddleware() {
         val list = mutableListOf<String>()
 
-        before<Int>({ _, _, _, _ -> list.add("before") })
-                .after({ _, _, _, _ -> list.add("after") })
+        beforeNext<Int>({ _, _, _, _ -> list.add("beforeNext") })
+                .after({ _, _, _, _ -> list.add("afterNext") })
                 .invoke(::state, ::dispatch, "increment", { list.add("next") })
 
-        assertEquals("before", list[0])
+        assertEquals("beforeNext", list[0])
         assertEquals("next", list[1])
-        assertEquals("after", list[2])
+        assertEquals("afterNext", list[2])
     }
 
     @Test

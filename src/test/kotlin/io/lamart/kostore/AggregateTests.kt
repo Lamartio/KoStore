@@ -1,6 +1,6 @@
 package io.lamart.kostore
 
-import io.lamart.kostore.util.aggregate
+import io.lamart.kostore.utils.aggregate
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

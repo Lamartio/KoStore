@@ -1,6 +1,6 @@
 package io.lamart.kostore
 
-import io.lamart.kostore.util.MiddlewareAfter
+import io.lamart.kostore.utils.AfterNext
 
 typealias Middleware<T> = (
         getState: () -> T,
@@ -21,9 +21,9 @@ fun <T> combine(
             })
         }
 
-fun <T> before(middleware: Middleware<T>): MiddlewareAfter<T> = MiddlewareAfter(middleware)
+fun <T> beforeNext(middleware: Middleware<T>): AfterNext<T> = AfterNext(middleware)
 
-fun <T> after(middleware: Middleware<T>): Middleware<T> =
+fun <T> afterNext(middleware: Middleware<T>): Middleware<T> =
         { getState, dispatch, action, next ->
             next(action)
             middleware(getState, dispatch, action, next)

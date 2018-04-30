@@ -1,7 +1,7 @@
 package io.lamart.kostore
 
 import io.lamart.kostore.input.IntWrapper
-import io.lamart.kostore.util.ListObserver
+import io.lamart.kostore.utils.ListObserver
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

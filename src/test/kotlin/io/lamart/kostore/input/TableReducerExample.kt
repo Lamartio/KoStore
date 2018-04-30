@@ -1,7 +1,7 @@
 package io.lamart.kostore.input
 
-import io.lamart.kostore.util.TableReducer
-import io.lamart.kostore.util.creates
+import io.lamart.kostore.utils.TableReducer
+import io.lamart.kostore.utils.creates
 
 
 internal data class Car(val steer: Steer, val gears: Gears) {
