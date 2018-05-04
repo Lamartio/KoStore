@@ -1,3 +1,6 @@
+# Idea specifics
+/.idea
+
 # Gradle project
 .gradle
 /.gradle/
