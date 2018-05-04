@@ -8,8 +8,8 @@ fun <T> Middleware<T>.test(state: T) = MiddlewareTester(state, this)
 class MiddlewareTester<T>(private val state: T?, private val middleware: Middleware<T>) {
 
     private val actions: MutableList<Any> = mutableListOf()
-    val results = mutableListOf<Any>()
-    val dispatches = mutableListOf<Any>()
+    val results : List<Any> = mutableListOf<Any>()
+    val dispatches : List<Any> = mutableListOf<Any>()
 
     fun dispatch(action: Any): MiddlewareTester<T> = apply { actions.add(action) }
 
@@ -17,9 +17,9 @@ class MiddlewareTester<T>(private val state: T?, private val middleware: Middlew
         actions.forEach {
             middleware(
                     { state!! },
-                    { dispatches.add(it) },
+                    { dispatches.let { it as MutableList }.add(it) },
                     it,
-                    { results.add(it) })
+                    { results.let { it as MutableList }.add(it) })
         }
         actions.clear()
     }

@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/KoStore.iml" filepath="$PROJECT_DIR$/.idea/modules/KoStore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KoStore_main.iml" filepath="$PROJECT_DIR$/.idea/modules/KoStore_main.iml" group="KoStore" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KoStore_test.iml" filepath="$PROJECT_DIR$/.idea/modules/KoStore_test.iml" group="KoStore" />
     </modules>
   </component>
 </project>
