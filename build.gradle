@@ -7,11 +7,10 @@
  */
 
 // Apply the java-library plugin to add support for Java Library
-apply plugin: 'java-library'
+apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'maven'
 
-version = "0.9.4"
 group = 'io.lamart.kostore'
 
 // In this section you declare where to find the dependencies of your project
