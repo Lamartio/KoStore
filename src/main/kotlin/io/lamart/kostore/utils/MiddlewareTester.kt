@@ -8,7 +8,7 @@ fun <T> Middleware<T>.test() =
 fun <T> Middleware<T>.test(state: T) =
         MiddlewareTester(state, this)
 
-class MiddlewareTester<T>(private val state: T?, private val middleware: Middleware<T>) {
+class MiddlewareTester<T>(val state: T?, val middleware: Middleware<T>) {
 
     val nexts: List<Any> = mutableListOf()
     val dispatches: List<Any> = mutableListOf()
