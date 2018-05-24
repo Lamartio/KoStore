@@ -22,20 +22,16 @@ class MiddlewareTests {
     @Test
     fun middlewareTester() {
         flipMathMiddleware
-                .test()
-                .dispatch("increment")
-                .invoke()
-                .run { results }
+                .test("increment")
+                .run { nexts }
                 .also { assertEquals("decrement", it.first()) }
     }
 
     @Test
     fun combineMiddleware() {
         combine(flipMathMiddleware, flipMathMiddleware)
-                .test()
-                .dispatch("increment")
-                .invoke()
-                .run { results }
+                .test("increment")
+                .run { nexts }
                 .also { assertEquals("increment", it.first()) }
     }
 
