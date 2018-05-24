@@ -2,17 +2,11 @@ package io.lamart.kostore.utils
 
 import io.lamart.kostore.Middleware
 
-fun <T> Middleware<T>.test(vararg actions: Any) =
-        MiddlewareTester(null, this).invoke(*actions)
+fun <T> Middleware<T>.test() =
+        MiddlewareTester(null, this)
 
-fun <T> Middleware<T>.test(actions: List<Any>) =
-        MiddlewareTester(null, this).invoke(actions)
-
-fun <T> Middleware<T>.test(state: T, vararg actions: Any) =
-        MiddlewareTester(state, this).invoke(*actions)
-
-fun <T> Middleware<T>.test(state: T, actions: List<Any>) =
-        MiddlewareTester(state, this).invoke(actions)
+fun <T> Middleware<T>.test(state: T) =
+        MiddlewareTester(state, this)
 
 class MiddlewareTester<T>(private val state: T?, private val middleware: Middleware<T>) {
 

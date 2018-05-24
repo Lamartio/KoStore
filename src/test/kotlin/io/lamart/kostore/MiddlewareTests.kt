@@ -22,7 +22,8 @@ class MiddlewareTests {
     @Test
     fun middlewareTester() {
         flipMathMiddleware
-                .test("increment")
+                .test()
+                .invoke("increment")
                 .run { nexts }
                 .also { assertEquals("decrement", it.first()) }
     }
@@ -30,7 +31,8 @@ class MiddlewareTests {
     @Test
     fun combineMiddleware() {
         combine(flipMathMiddleware, flipMathMiddleware)
-                .test("increment")
+                .test()
+                .invoke("increment")
                 .run { nexts }
                 .also { assertEquals("increment", it.first()) }
     }
