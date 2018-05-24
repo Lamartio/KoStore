@@ -1,6 +1,5 @@
 package io.lamart.kostore
 
-import io.lamart.kostore.input.IntWrapper
 import io.lamart.kostore.utils.test
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -60,31 +59,6 @@ class MiddlewareTests {
 
         assertEquals("next", list[0])
         assertEquals("afterNext", list[1])
-    }
-
-    @Test
-    fun beforeAndAfterMiddleware() {
-        val list = mutableListOf<String>()
-
-        beforeNext<Int>({ _, _, _, _ -> list.add("beforeNext") })
-                .after({ _, _, _, _ -> list.add("afterNext") })
-                .invoke(::state, ::dispatch, "increment", { list.add("next") })
-
-        assertEquals("beforeNext", list[0])
-        assertEquals("next", list[1])
-        assertEquals("afterNext", list[2])
-    }
-
-    @Test
-    fun compose() {
-        val wrapperMiddleware: Middleware<IntWrapper> = flipMathMiddleware.compose { it.number }
-
-        wrapperMiddleware
-                .test()
-                .dispatch("increment")
-                .invoke()
-                .run { results }
-                .also { assertEquals("decrement", it.first()) }
     }
 
 }
