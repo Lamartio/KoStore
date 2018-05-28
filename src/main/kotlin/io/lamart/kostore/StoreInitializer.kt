@@ -17,6 +17,8 @@ interface FilteredStoreInitializer<T, out A> {
 
 }
 
+inline fun <T, reified A> StoreInitializer<T>.filter(block: FilteredStoreInitializer<T, A>.() -> Unit) = block(filter())
+
 inline fun <T, reified A> StoreInitializer<T>.filter(): FilteredStoreInitializer<T, A> =
         object : FilteredStoreInitializer<T, A> {
 
