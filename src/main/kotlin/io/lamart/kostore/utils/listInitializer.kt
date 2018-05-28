@@ -11,11 +11,11 @@ fun <T> listInitializer(
 ): StoreInitializer<List<T>>.() -> Unit = {
 
     addMiddleware { getState, dispatch, action, next ->
-        middleware({ getState().find{ predicate(it,action) } }, dispatch, action, next)
+        middleware({ getState().find { predicate(it, action) } }, dispatch, action, next)
     }
 
     addReducer { state: List<T>, action ->
-        val index = state.indexOfFirst{ predicate(it,action) }
+        val index = state.indexOfFirst { predicate(it, action) }
 
         if (index != -1)
             state.toMutableList().also { list -> list[index] = reducer(list[index], action) }
