@@ -17,8 +17,6 @@ interface FilteredStoreInitializer<T, out A> {
 
 }
 
-inline fun <T, reified A> StoreInitializer<T>.filter(block: FilteredStoreInitializer<T, A>.() -> Unit) = block(filter())
-
 inline fun <T, reified A> StoreInitializer<T>.filter(): FilteredStoreInitializer<T, A> =
         object : FilteredStoreInitializer<T, A> {
 
@@ -30,8 +28,17 @@ inline fun <T, reified A> StoreInitializer<T>.filter(): FilteredStoreInitializer
 
         }
 
-fun <T, R> StoreInitializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T, block: StoreInitializer<R>.() -> Unit) =
-        compose(map, reduce).run(block)
+inline fun <T, reified A, R> StoreInitializer<T>.filteredCompose(
+        noinline map: (T) -> R,
+        noinline reduce: T.(R) -> T,
+        block: FilteredStoreInitializer<R, A>.() -> Unit
+) = compose(map, reduce).filter<R, A>().let(block)
+
+fun <T, R> StoreInitializer<T>.compose(
+        map: (T) -> R,
+        reduce: T.(R) -> T,
+        block: StoreInitializer<R>.() -> Unit
+) = compose(map, reduce).run(block)
 
 fun <T, R> StoreInitializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T): StoreInitializer<R> =
         object : StoreInitializer<R> {
