@@ -40,8 +40,4 @@ open class Store<T>(
         this.middleware = combine(this.middleware, middleware)
     }
 
-    fun wrapMiddleware(wrap: (Middleware<T>) -> Middleware<T>) {
-        middleware = wrap(middleware)
-    }
-
 }
