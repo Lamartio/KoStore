@@ -2,11 +2,10 @@ package io.lamart.kostore
 
 import io.lamart.kostore.utils.ListObserver
 
-
 open class Store<T>(
         private var state: T,
         init: Store<T>.() -> Unit = {}
-) : StoreSource<T>, StoreInitializer<T>, Observable<T> {
+) : StoreSource<T>, Initializer<T>, Observable<T> {
 
     private var middleware: Middleware<T> = { _, _, action, next -> next(action) }
     private var reducer: Reducer<T> = { state, _ -> state }
