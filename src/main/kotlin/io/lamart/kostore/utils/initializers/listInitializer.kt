@@ -1,4 +1,4 @@
-package io.lamart.kostore.utils
+package io.lamart.kostore.utils.initializers
 
 import io.lamart.kostore.Middleware
 import io.lamart.kostore.Reducer

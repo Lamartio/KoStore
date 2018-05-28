@@ -7,6 +7,20 @@ typealias Middleware<T> = (
         next: (Any) -> Unit
 ) -> Unit
 
+typealias FilteredMiddleware<T, A> = (
+        getState: () -> T,
+        dispatch: (Any) -> Unit,
+        action: A,
+        next: (Any) -> Unit
+) -> Unit
+
+inline fun <T, reified A> filter(crossinline middleware: FilteredMiddleware<T, A>): Middleware<T> =
+        { getState, dispatch, action, next ->
+            if (action is A)
+                middleware(getState, dispatch, action, next)
+            else
+                next(action)
+        }
 
 fun <T> combine(
         previous: Middleware<T>,

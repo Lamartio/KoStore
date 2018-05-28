@@ -9,8 +9,29 @@ interface StoreInitializer<T> {
 
 }
 
-fun <T, R> StoreInitializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T, init: StoreInitializer<R>.() -> Unit) =
-        compose(map, reduce).run(init)
+interface FilteredStoreInitializer<T, out A> {
+
+    fun addMiddleware(middleware: FilteredMiddleware<T, A>)
+
+    fun addReducer(reducer: FilteredReducer<T, A>)
+
+}
+
+inline fun <T, reified A> StoreInitializer<T>.filter(block: FilteredStoreInitializer<T, A>.() -> Unit) = block(filter())
+
+inline fun <T, reified A> StoreInitializer<T>.filter(): FilteredStoreInitializer<T, A> =
+        object : FilteredStoreInitializer<T, A> {
+
+            override fun addMiddleware(middleware: FilteredMiddleware<T, A>) =
+                    this@filter.addMiddleware(filter(middleware))
+
+            override fun addReducer(reducer: FilteredReducer<T, A>) =
+                    this@filter.addReducer(filter(reducer))
+
+        }
+
+fun <T, R> StoreInitializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T, block: StoreInitializer<R>.() -> Unit) =
+        compose(map, reduce).run(block)
 
 fun <T, R> StoreInitializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T): StoreInitializer<R> =
         object : StoreInitializer<R> {
