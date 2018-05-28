@@ -1,4 +1,4 @@
-package nl.elements.cerium.features.info
+package io.lamart.kostore.utils
 
 import io.lamart.kostore.Middleware
 import io.lamart.kostore.Reducer
