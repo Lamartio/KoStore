@@ -2,6 +2,7 @@ package io.lamart.kostore.initializers
 
 import io.lamart.kostore.FilteredMiddleware
 import io.lamart.kostore.FilteredReducer
+import io.lamart.kostore.filter
 
 
 interface Initializer<T> : FilteredInitializer<T, Any>
@@ -24,24 +25,28 @@ interface FilteredOptionalInitializer<T, out A : Any> {
 
 }
 
-inline fun <T, reified A : Any> FilteredInitializer<T, A>.toInitializer(): Initializer<T> =
+internal inline fun <T, reified A : Any> FilteredInitializer<T, A>.toInitializer(): Initializer<T> =
         object : Initializer<T> {
 
             private val initializer = this@toInitializer
 
-            override fun addMiddleware(middleware: FilteredMiddleware<T, Any>) = initializer.addMiddleware(middleware)
+            override fun addMiddleware(middleware: FilteredMiddleware<T, Any>) =
+                    initializer.addMiddleware(middleware)
 
-            override fun addReducer(reducer: FilteredReducer<T, Any>) = initializer.addReducer(reducer)
+            override fun addReducer(reducer: FilteredReducer<T, Any>) =
+                    initializer.addReducer(reducer)
 
         }
 
-inline fun <T, reified A : Any> FilteredOptionalInitializer<T, A>.toOptionalInitializer(): OptionalInitializer<T> =
+internal inline fun <T, reified A : Any> FilteredOptionalInitializer<T, A>.toOptionalInitializer(): OptionalInitializer<T> =
         object : OptionalInitializer<T> {
 
             private val initializer = this@toOptionalInitializer
 
-            override fun addMiddleware(middleware: FilteredMiddleware<T?, Any>) = initializer.addMiddleware(middleware)
+            override fun addMiddleware(middleware: FilteredMiddleware<T?, Any>) =
+                    initializer.addMiddleware(middleware)
 
-            override fun addReducer(reducer: FilteredReducer<T, Any>) = initializer.addReducer(reducer)
+            override fun addReducer(reducer: FilteredReducer<T, Any>) =
+                    initializer.addReducer(reducer)
 
         }
