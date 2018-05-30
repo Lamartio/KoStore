@@ -1,32 +1,36 @@
 package io.lamart.kostore.initializers
 
-import io.lamart.kostore.Initializer
-import io.lamart.kostore.Middleware
-import io.lamart.kostore.OptionalInitializer
-import io.lamart.kostore.Reducer
+import io.lamart.kostore.*
 
 fun <T> Initializer<List<T>>.composeList(predicate: (state: T, action: Any) -> Boolean, block: OptionalInitializer<T>.() -> Unit) =
         composeList(predicate).run(block)
 
 fun <T> Initializer<List<T>>.composeList(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        object : OptionalInitializer<T> {
+        composeFilteredList(predicate).toOptionalInitializer()
 
-            val initializer = this@composeList
+inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: Any) -> Boolean, block: FilteredOptionalInitializer<T, A>.() -> Unit) =
+        composeFilteredList(predicate).run(block)
 
-            override fun addOptionalMiddleware(middleware: Middleware<T?>) {
+inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: Any) -> Boolean): FilteredOptionalInitializer<T, A> =
+        object : FilteredOptionalInitializer<T, A> {
+
+            val initializer = this@composeFilteredList
+
+            override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) {
                 initializer.addMiddleware { getState, dispatch, action, next ->
-                    middleware({ getState().find { predicate(it, action) } }, dispatch, action, next)
+                    filter(middleware).invoke({ getState().find { predicate(it, action) } }, dispatch, action, next)
                 }
             }
 
-            override fun addReducer(reducer: Reducer<T>) {
+            override fun addReducer(reducer: FilteredReducer<T, A>) {
                 initializer.addReducer { state: List<T>, action ->
                     val index = state.indexOfFirst { predicate(it, action) }
 
                     if (index != -1)
-                        state.toMutableList().also { list -> list[index] = reducer(list[index], action) }
+                        state.toMutableList().also { list -> list[index] = filter(reducer).invoke(list[index], action) }
                     else
                         state
                 }
             }
+
         }

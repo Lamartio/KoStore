@@ -1,5 +1,6 @@
 package io.lamart.kostore
 
+import io.lamart.kostore.initializers.Initializer
 import io.lamart.kostore.utils.ListObserver
 
 open class Store<T>(

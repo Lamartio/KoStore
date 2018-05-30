@@ -1,31 +1,29 @@
 package io.lamart.kostore.initializers
 
-import io.lamart.kostore.Initializer
-import io.lamart.kostore.Middleware
-import io.lamart.kostore.OptionalInitializer
-import io.lamart.kostore.Reducer
+import io.lamart.kostore.*
 
 
 fun <K, V> Initializer<Map<K, V>>.composeMap(getKey: (action: Any) -> K, block: OptionalInitializer<V>.() -> Unit) =
         composeMap(getKey).run(block)
 
 fun <K, V> Initializer<Map<K, V>>.composeMap(getKey: (action: Any) -> K): OptionalInitializer<V> =
-        object : OptionalInitializer<V> {
+        composeFilteredMap(getKey).toOptionalInitializer()
 
-            val initializer = this@composeMap
+inline fun <K, V, reified A : Any> FilteredInitializer<Map<K, V>, A>.composeFilteredMap(crossinline getKey: (action: Any) -> K, block: FilteredOptionalInitializer<V, A>.() -> Unit) =
+        composeFilteredMap(getKey).run(block)
 
-            override fun addOptionalMiddleware(middleware: Middleware<V?>) {
+inline fun <K, V, reified A : Any> FilteredInitializer<Map<K, V>, A>.composeFilteredMap(crossinline getKey: (action: Any) -> K): FilteredOptionalInitializer<V, A> =
+        object : FilteredOptionalInitializer<V, A> {
+
+            val initializer = this@composeFilteredMap
+
+            override fun addMiddleware(middleware: FilteredMiddleware<V?, A>) {
                 initializer.addMiddleware { getState, dispatch, action, next ->
-                    middleware(
-                            { getState()[getKey(action)] },
-                            dispatch,
-                            action,
-                            next
-                    )
+                    filter(middleware).invoke({ getState()[getKey(action)] }, dispatch, action, next)
                 }
             }
 
-            override fun addReducer(reducer: Reducer<V>) {
+            override fun addReducer(reducer: FilteredReducer<V, A>) {
                 initializer.addReducer { state, action ->
                     val key = getKey(action)
                     val value = state[key]
@@ -34,7 +32,7 @@ fun <K, V> Initializer<Map<K, V>>.composeMap(getKey: (action: Any) -> K): Option
                         state
                     else
                         state.toMutableMap().apply {
-                            put(key, reducer(value, action))
+                            put(key, filter(reducer).invoke(value, action))
                         }
                 }
             }

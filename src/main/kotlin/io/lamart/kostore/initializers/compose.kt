@@ -1,6 +1,5 @@
 package io.lamart.kostore.initializers
 
-import io.lamart.kostore.Initializer
 import io.lamart.kostore.Middleware
 import io.lamart.kostore.Reducer
 

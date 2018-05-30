@@ -1,25 +1,28 @@
 package io.lamart.kostore.initializers
 
-import io.lamart.kostore.Initializer
-import io.lamart.kostore.Middleware
-import io.lamart.kostore.OptionalInitializer
-import io.lamart.kostore.Reducer
+import io.lamart.kostore.*
 
 fun <T> Initializer<Collection<T>>.composeCollection(predicate: (state: T, action: Any) -> Boolean, block: OptionalInitializer<T>.() -> Unit) =
         composeCollection(predicate).run(block)
 
 fun <T> Initializer<Collection<T>>.composeCollection(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        object : OptionalInitializer<T> {
+        composeFilteredCollection(predicate).toOptionalInitializer()
 
-            val initializer = this@composeCollection
+inline fun <T, reified A : Any> FilteredInitializer<Collection<T>, A>.composeFilteredCollection(crossinline predicate: (state: T, action: Any) -> Boolean, block: FilteredOptionalInitializer<T, A> .() -> Unit) =
+        composeFilteredCollection(predicate).let(block)
 
-            override fun addOptionalMiddleware(middleware: Middleware<T?>) {
+inline fun <T, reified A : Any> FilteredInitializer<Collection<T>, A>.composeFilteredCollection(crossinline predicate: (state: T, action: Any) -> Boolean): FilteredOptionalInitializer<T, A> =
+        object : FilteredOptionalInitializer<T, A> {
+
+            val initializer = this@composeFilteredCollection
+
+            override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) {
                 initializer.addMiddleware { getState, dispatch, action, next ->
-                    middleware({ getState().find { predicate(it, action) } }, dispatch, action, next)
+                    filter(middleware).invoke({ getState().find { predicate(it, action) } }, dispatch, action, next)
                 }
             }
 
-            override fun addReducer(reducer: Reducer<T>) {
+            override fun addReducer(reducer: FilteredReducer<T, A>) {
                 initializer.addReducer { state: Collection<T>, action ->
                     val item = state.find { predicate(it, action) }
 
@@ -28,8 +31,10 @@ fun <T> Initializer<Collection<T>>.composeCollection(predicate: (state: T, actio
                     else
                         state.toMutableList().also { collection ->
                             collection.remove(item)
-                            collection.add(reducer(item, action))
+                            collection.add(filter(reducer).invoke(item, action))
                         }
                 }
             }
+
+
         }
