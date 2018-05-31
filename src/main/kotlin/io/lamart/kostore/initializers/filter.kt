@@ -7,13 +7,11 @@ inline fun <T, reified A : Any> Initializer<T>.filter(): FilteredInitializer<T, 
 
             val initializer = this@filter
 
-            override fun addMiddleware(middleware: FilteredMiddleware<T, A>) {
-                initializer.addMiddleware(filter(middleware))
-            }
+            override fun addMiddleware(middleware: FilteredMiddleware<T, A>) =
+                    initializer.addMiddleware(filter(middleware))
 
-            override fun addReducer(reducer: FilteredReducer<T, A>) {
-                initializer.addReducer(filter(reducer))
-            }
+            override fun addReducer(reducer: FilteredReducer<T, A>) =
+                    initializer.addReducer(filter(reducer))
 
         }
 
@@ -22,12 +20,10 @@ inline fun <T, reified A : Any> OptionalInitializer<T>.filter(): FilteredOptiona
 
             val initializer = this@filter
 
-            override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) {
-                initializer.addMiddleware(filter(middleware))
-            }
+            override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) =
+                    initializer.addMiddleware(filter(middleware))
 
-            override fun addReducer(reducer: FilteredReducer<T, A>) {
-                initializer.addReducer(filter(reducer))
-            }
+            override fun addReducer(reducer: FilteredReducer<T, A>) =
+                    initializer.addReducer(filter(reducer))
 
         }

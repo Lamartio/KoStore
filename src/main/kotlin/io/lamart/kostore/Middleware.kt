@@ -17,22 +17,24 @@ inline fun <T, reified A : Any> filter(crossinline middleware: FilteredMiddlewar
                 next(action)
         }
 
+@Suppress("NAME_SHADOWING")
 fun <T> combine(
-        combinedMiddlewares: Middleware<T>,
+        accumulated: Middleware<T>,
         middleware: Middleware<T>
 ): Middleware<T> =
         { getState, dispatch, action, next ->
-            combinedMiddlewares(getState, dispatch, action, { action ->
+            accumulated(getState, dispatch, action, { action ->
                 middleware(getState, dispatch, action, next)
             })
         }
 
+@Suppress("NAME_SHADOWING")
 inline fun <T, reified A : Any> combineFiltered(
-        crossinline combinedMiddlewares: FilteredMiddleware<T, A>,
+        crossinline accumulated: FilteredMiddleware<T, A>,
         crossinline middleware: FilteredMiddleware<T, A>
 ): FilteredMiddleware<T, A> =
         { getState, dispatch, action, next ->
-            combinedMiddlewares(getState, dispatch, action, { action ->
+            accumulated(getState, dispatch, action, { action ->
                 filter(middleware).invoke(getState, dispatch, action, next)
             })
         }

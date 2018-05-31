@@ -6,31 +6,36 @@ fun <T> Initializer<List<T>>.composeList(predicate: (state: T, action: Any) -> B
         composeList(predicate).run(block)
 
 fun <T> Initializer<List<T>>.composeList(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        composeFilteredList(predicate).toOptionalInitializer()
+        composeList(this, { it }, { it }, predicate).toOptionalInitializer()
 
-inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: Any) -> Boolean, block: FilteredOptionalInitializer<T, A>.() -> Unit) =
+inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: A) -> Boolean, block: FilteredOptionalInitializer<T, A>.() -> Unit) =
         composeFilteredList(predicate).run(block)
 
-inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: Any) -> Boolean): FilteredOptionalInitializer<T, A> =
-        object : FilteredOptionalInitializer<T, A> {
+inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: A) -> Boolean): FilteredOptionalInitializer<T, A> =
+        composeList(this, { filter(it) }, { filter(it) }, predicate)
 
-            val initializer = this@composeFilteredList
+inline fun <T, reified A : Any> composeList(
+        initializer: FilteredInitializer<List<T>, A>,
+        crossinline transformMiddleware: (FilteredMiddleware<T?, A>) -> FilteredMiddleware<T?, A>,
+        crossinline transformReducer: (FilteredReducer<T, A>) -> FilteredReducer<T, A>,
+        crossinline predicate: (state: T, action: A) -> Boolean
+): FilteredOptionalInitializer<T, A> = object : FilteredOptionalInitializer<T, A> {
 
-            override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) {
-                initializer.addMiddleware { getState, dispatch, action, next ->
-                    filter(middleware).invoke({ getState().find { predicate(it, action) } }, dispatch, action, next)
-                }
-            }
-
-            override fun addReducer(reducer: FilteredReducer<T, A>) {
-                initializer.addReducer { state: List<T>, action ->
-                    val index = state.indexOfFirst { predicate(it, action) }
-
-                    if (index != -1)
-                        state.toMutableList().also { list -> list[index] = filter(reducer).invoke(list[index], action) }
-                    else
-                        state
-                }
-            }
-
+    override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) {
+        initializer.addMiddleware { getState, dispatch, action, next ->
+            transformMiddleware(middleware).invoke({ getState().find { predicate(it, action) } }, dispatch, action, next)
         }
+    }
+
+    override fun addReducer(reducer: FilteredReducer<T, A>) {
+        initializer.addReducer { state: List<T>, action ->
+            val index = state.indexOfFirst { predicate(it, action) }
+
+            if (index != -1)
+                state.toMutableList().also { list -> list[index] = transformReducer(reducer).invoke(list[index], action) }
+            else
+                state
+        }
+    }
+
+}

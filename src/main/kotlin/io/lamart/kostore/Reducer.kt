@@ -10,11 +10,11 @@ inline fun <T, reified A : Any> filter(crossinline reducer: FilteredReducer<T, A
             else state
         }
 
-fun <T> combine(combinedReducers: Reducer<T>, reducer: Reducer<T>): Reducer<T> =
-        { state, action -> combinedReducers(state, action).let { reducer(it, action) } }
+fun <T> combine(accumulated: Reducer<T>, reducer: Reducer<T>): Reducer<T> =
+        { state, action -> accumulated(state, action).let { reducer(it, action) } }
 
 inline fun <T, reified A : Any> combineFiltered(
-        crossinline combinedReducers: FilteredReducer<T, A>,
+        crossinline accumulated: FilteredReducer<T, A>,
         crossinline reducer: FilteredReducer<T, A>
 ): FilteredReducer<T, A> =
-        { state, action -> combinedReducers(state, action).let { filter(reducer).invoke(it, action) } }
+        { state, action -> accumulated(state, action).let { filter(reducer).invoke(it, action) } }
