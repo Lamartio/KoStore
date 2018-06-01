@@ -13,5 +13,12 @@ data class Car(
                 Seat(Position.REAR_LEFT),
                 Seat(Position.REAR_RIGHT)
         ),
-        val horn: Horn = Horn()
+        val steer: Steer = Steer(
+                buttons = setOf(
+                        Button("set cruise control"),
+                        Button("stop cruise controler"),
+                        Button("reset cruise control")
+                )
+        )
 )
+

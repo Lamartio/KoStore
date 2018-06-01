@@ -3,6 +3,7 @@ package io.lamart.kostore.car
 import io.lamart.kostore.FilteredReducer
 
 data class Seat(val id: Position, val seatBeltLocked: Boolean = false)
+
 sealed class SeatAction(open val seatId: Position) {
     data class Lock(override val seatId: Position) : SeatAction(seatId)
     data class Unlock(override val seatId: Position) : SeatAction(seatId)
