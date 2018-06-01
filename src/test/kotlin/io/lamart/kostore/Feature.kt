@@ -65,10 +65,6 @@ class On internal constructor(
         }
     }
 
-    infix fun it(text: String) {
-
-    }
-
     fun it(text: String, block: It.() -> Unit = {}): It =
             It(this, text, block).also { conditions.add(it) }
 

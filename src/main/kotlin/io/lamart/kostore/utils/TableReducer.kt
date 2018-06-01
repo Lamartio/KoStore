@@ -44,6 +44,7 @@ open class TableReducer<T> : Reducer<T> {
     )
 }
 
+@Suppress("NAME_SHADOWING")
 inline fun <T, reified S : T, reified A : Any> TableReducer<T>.Result<S, A>.creates(crossinline creator: S.(A) -> T): TableReducer<T> =
         result.apply {
             setReducer { state, action ->
