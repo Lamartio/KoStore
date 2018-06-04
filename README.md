@@ -109,8 +109,8 @@ fun saveMiddleware(save: (LoginState) -> Unit): Middleware<LoginState> =
 These two middlewares represent the middleware necessary to change the `LoginState`. To make these easier to (re)use, we can bundle them into one `middleware`:
 ```kotlin
 fun loginMiddleware(
-        networkOperation: NetworkOperation,
-        persist: (LoginState) -> Unit
+        networkOperation: NetworkOperation = { _, _, _ -> }, // stub
+        persist: (LoginState) -> Unit = {} // stub
 ): Middleware<LoginState> =
         arrayOf(
                 networkMiddleware(networkOperation),
