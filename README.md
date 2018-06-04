@@ -3,9 +3,12 @@
 
 A functional implementation of Redux for Kotlin. 
 ## Example
-Imagine creating an app where the user should login. When the user is not logged in, he should use his username and password to login. The credentials are send to a server and it will returns us a token or an error.
+Imagine creating an app where the user should login. When the user is not logged in, he should use his username and password to login. The credentials are send to a server and it will return us a token or an error.
 
-
+To work with Redux a developer has to make three steps:
+1. Create the reducer
+1. Create the middleware
+1. Add these to the store
 ### 1. Create the reducer 
 There are three states involved:
 
@@ -118,7 +121,7 @@ fun loginMiddleware(
                 persistMiddleware(persist)
         ).reduce(::combine)
 ```
-### 3. Create a store
+### 3. Add these to the store
 The goal of using Redix is having an object to which you can send actions to and receive state changes through an observer. The object that facilitates this, is called the 'Store'.
 
 Usually a store is a composition of multiple (sub-)states. Therefore the `Store` gives access to a initialization DSL in which you can install multiple reducers and middlewares.
