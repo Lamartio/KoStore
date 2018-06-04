@@ -138,4 +138,6 @@ val store: Store<AppState> = Store(AppState()) {
 
 }
 ```
-For convience there are also `compose` functions for working with `Collection`, `List` and `Map`. 
+For convience there are also `compose` functions for working with `Collection`, `List` and `Map`.
+
+Calling `store.dispatch()` will emit the action to the middleware. The middleware will pass it results to the reducer by calling `next()` and the app listens to the state changes through `store.addObserver()`.
