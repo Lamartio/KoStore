@@ -80,9 +80,10 @@ fun persistMiddleware(persist: (LoginState) -> Unit): Middleware<LoginState> =
 
         }
 
+// the parameters are stubbed for this example
 fun loginMiddleware(
-        networkOperation: NetworkOperation = { _, _, _ -> }, // stub
-        persist: (LoginState) -> Unit = {} // stub
+        networkOperation: NetworkOperation = { _, _, _ -> },
+        persist: (LoginState) -> Unit = {}
 ): Middleware<LoginState> =
         arrayOf(
                 networkMiddleware(networkOperation),
