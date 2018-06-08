@@ -2,20 +2,44 @@ package io.lamart.kostore.initializers
 
 import io.lamart.kostore.*
 
-fun <T> Initializer<List<T>>.composeList(predicate: (state: T, action: Any) -> Boolean, block: OptionalInitializer<T>.() -> Unit) =
-        composeList(predicate).run(block)
+fun <T> Initializer<List<T>>.composeList(
+        predicate: (state: T, action: Any) -> Boolean
+) = toOptionalInitializer().composeFilteredList(predicate).asOptionalInitializer()
 
-fun <T> Initializer<List<T>>.composeList(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        composeList(this, { it }, { it }, predicate).toOptionalInitializer()
+fun <T> Initializer<List<T>>.composeList(
+        predicate: (state: T, action: Any) -> Boolean,
+        block: OptionalInitializer<T>.() -> Unit
+) = composeList(predicate).run(block)
 
-inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: A) -> Boolean, block: FilteredOptionalInitializer<T, A>.() -> Unit) =
-        composeFilteredList(predicate).run(block)
+inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(
+        crossinline predicate: (state: T, action: A) -> Boolean,
+        block: FilteredOptionalInitializer<T, A>.() -> Unit
+) = composeFilteredList(predicate).run(block)
 
-inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(crossinline predicate: (state: T, action: A) -> Boolean): FilteredOptionalInitializer<T, A> =
-        composeList(this, { filter(it) }, { filter(it) }, predicate)
+inline fun <T, reified A : Any> FilteredInitializer<List<T>, A>.composeFilteredList(
+        crossinline predicate: (state: T, action: A) -> Boolean
+) = toOptionalInitializer().composeFilteredList(predicate)
 
-inline fun <T, reified A : Any> composeList(
-        initializer: FilteredInitializer<List<T>, A>,
+fun <T> OptionalInitializer<List<T>>.composeList(
+        predicate: (state: T, action: Any) -> Boolean,
+        block: OptionalInitializer<T>.() -> Unit
+) = composeFilteredList(predicate).asOptionalInitializer().run(block)
+
+fun <T> OptionalInitializer<List<T>>.composeList(
+        predicate: (state: T, action: Any) -> Boolean
+) = composeFilteredList(predicate).asOptionalInitializer()
+
+inline fun <T, reified A : Any> FilteredOptionalInitializer<List<T>, A>.composeFilteredList(
+        crossinline predicate: (state: T, action: A) -> Boolean,
+        block: FilteredOptionalInitializer<T, A>.() -> Unit
+) = composeFilteredList(predicate).apply(block)
+
+inline fun <T, reified A : Any> FilteredOptionalInitializer<List<T>, A>.composeFilteredList(
+        crossinline predicate: (state: T, action: A) -> Boolean
+) = composeFilteredList(this, { filter(it) }, { filter(it) }, predicate)
+
+inline fun <T, reified A : Any> composeFilteredList(
+        initializer: FilteredOptionalInitializer<List<T>, A>,
         crossinline transformMiddleware: (FilteredMiddleware<T?, A>) -> FilteredMiddleware<T?, A>,
         crossinline transformReducer: (FilteredReducer<T, A>) -> FilteredReducer<T, A>,
         crossinline predicate: (state: T, action: A) -> Boolean
@@ -23,7 +47,7 @@ inline fun <T, reified A : Any> composeList(
 
     override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) {
         initializer.addMiddleware { getState, dispatch, action, next ->
-            transformMiddleware(middleware).invoke({ getState().find { predicate(it, action) } }, dispatch, action, next)
+            transformMiddleware(middleware).invoke({ getState()?.find { predicate(it, action) } }, dispatch, action, next)
         }
     }
 

@@ -3,20 +3,44 @@ package io.lamart.kostore.initializers
 import io.lamart.kostore.*
 
 
-fun <K, V> Initializer<Map<K, V>>.composeMap(getKey: (action: Any) -> K, block: OptionalInitializer<V>.() -> Unit) =
-        composeMap(getKey).run(block)
+fun <K, V> Initializer<Map<K, V>>.composeMap(
+        getKey: (action: Any) -> K,
+        block: OptionalInitializer<V>.() -> Unit
+) = toOptionalInitializer().composeFilteredMap(getKey).asOptionalInitializer().run(block)
 
-fun <K, V> Initializer<Map<K, V>>.composeMap(getKey: (action: Any) -> K): OptionalInitializer<V> =
-        composeMap(this, { it }, { it }, getKey).toOptionalInitializer()
+fun <K, V> Initializer<Map<K, V>>.composeMap(
+        getKey: (action: Any) -> K
+) = toOptionalInitializer().composeFilteredMap(getKey).asOptionalInitializer()
 
-inline fun <K, V, reified A : Any> FilteredInitializer<Map<K, V>, A>.composeFilteredMap(crossinline getKey: (action: A) -> K, block: FilteredOptionalInitializer<V, A>.() -> Unit) =
-        composeFilteredMap(getKey).run(block)
+inline fun <K, V, reified A : Any> FilteredInitializer<Map<K, V>, A>.composeFilteredMap(
+        crossinline getKey: (action: A) -> K,
+        block: FilteredOptionalInitializer<V, A>.() -> Unit
+) = toOptionalInitializer().composeFilteredMap(getKey).run(block)
 
-inline fun <K, V, reified A : Any> FilteredInitializer<Map<K, V>, A>.composeFilteredMap(crossinline getKey: (action: A) -> K): FilteredOptionalInitializer<V, A> =
-        composeMap(this, { filter(it) }, { filter(it) }, getKey)
+inline fun <K, V, reified A : Any> FilteredInitializer<Map<K, V>, A>.composeFilteredMap(
+        crossinline getKey: (action: A) -> K
+) = toOptionalInitializer().composeFilteredMap(getKey)
 
-inline fun <K, V, reified A : Any> composeMap(
-        initializer: FilteredInitializer<Map<K, V>, A>,
+fun <K, V> OptionalInitializer<Map<K, V>>.composeMap(
+        getKey: (action: Any) -> K,
+        block: OptionalInitializer<V>.() -> Unit
+) = composeFilteredMap(getKey).asOptionalInitializer().run(block)
+
+fun <K, V> OptionalInitializer<Map<K, V>>.composeMap(
+        getKey: (action: Any) -> K
+) = composeFilteredMap(getKey).asOptionalInitializer()
+
+inline fun <K, V, reified A : Any> FilteredOptionalInitializer<Map<K, V>, A>.composeFilteredMap(
+        crossinline getKey: (action: A) -> K,
+        block: FilteredOptionalInitializer<V, A>.() -> Unit = {}
+) = composeFilteredMap(getKey).run(block)
+
+inline fun <K, V, reified A : Any> FilteredOptionalInitializer<Map<K, V>, A>.composeFilteredMap(
+        crossinline getKey: (action: A) -> K
+) = composeFilteredMap(this, { filter(it) }, { filter(it) }, getKey)
+
+inline fun <K, V, reified A : Any> composeFilteredMap(
+        initializer: FilteredOptionalInitializer<Map<K, V>, A>,
         crossinline transformMiddleware: (FilteredMiddleware<V?, A>) -> FilteredMiddleware<V?, A>,
         crossinline transformReducer: (FilteredReducer<V, A>) -> FilteredReducer<V, A>,
         crossinline getKey: (action: A) -> K
@@ -24,7 +48,7 @@ inline fun <K, V, reified A : Any> composeMap(
 
     override fun addMiddleware(middleware: FilteredMiddleware<V?, A>) {
         initializer.addMiddleware { getState, dispatch, action, next ->
-            transformMiddleware(middleware).invoke({ getState()[getKey(action)] }, dispatch, action, next)
+            transformMiddleware(middleware).invoke({ getState()?.get(getKey(action)) }, dispatch, action, next)
         }
     }
 

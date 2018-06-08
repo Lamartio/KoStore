@@ -2,21 +2,24 @@ package io.lamart.kostore.initializers
 
 import io.lamart.kostore.*
 
-fun <T, R> Initializer<T>.compose(
-        map: (T) -> R,
-        reduce: T.(R) -> T,
-        block: Initializer<R>.() -> Unit
-) = compose(map, reduce).run(block)
+fun <T, R> Initializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T, block: Initializer<R>.() -> Unit) =
+        compose(map, reduce).run(block)
 
-fun <T, R> Initializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T): Initializer<R> =
-        compose(this, { it }, { it }, map, reduce).toInitializer()
+fun <T, R> Initializer<T>.compose(map: (T) -> R, reduce: T.(R) -> T) =
+        composeFiltered(map, reduce).asInitializer()
+
+inline fun <T, R, reified A : Any> FilteredInitializer<T, A>.composeFiltered(
+        crossinline map: (T) -> R,
+        crossinline reduce: T.(R) -> T,
+        block: FilteredInitializer<R, A>.() -> Unit
+) = composeFiltered(map, reduce).run(block)
 
 inline fun <T, R, reified A : Any> FilteredInitializer<T, A>.composeFiltered(
         crossinline map: (T) -> R,
         crossinline reduce: T.(R) -> T
-): FilteredInitializer<R, A> = compose(this, { filter(it) }, { filter(it) }, map, reduce)
+) = composeFiltered(this, { filter(it) }, { filter(it) }, map, reduce)
 
-inline fun <T, R, reified A : Any> compose(
+inline fun <T, R, reified A : Any> composeFiltered(
         initializer: FilteredInitializer<T, A>,
         crossinline transformMiddleware: (FilteredMiddleware<R, A>) -> FilteredMiddleware<R, A>,
         crossinline transformReducer: (FilteredReducer<R, A>) -> FilteredReducer<R, A>,
@@ -50,29 +53,31 @@ inline fun <T, R, reified A : Any> compose(
  */
 
 
-inline fun <T, R> OptionalInitializer<T>.composeOptional(
+inline fun <T, R> OptionalInitializer<T>.compose(
         crossinline map: (T) -> R,
         crossinline reduce: T.(R) -> T,
         block: OptionalInitializer<R>.() -> Unit
-) = composeOptional(this, { filter(it) }, { filter(it) }, map, reduce).toOptionalInitializer().run(block)
+) = compose(map, reduce).run(block)
 
-inline fun <T, R> OptionalInitializer<T>.composeOptional(
+
+inline fun <T, R> OptionalInitializer<T>.compose(
         crossinline map: (T) -> R,
         crossinline reduce: T.(R) -> T
-): OptionalInitializer<R> = composeOptional(this, { filter(it) }, { filter(it) }, map, reduce).toOptionalInitializer()
+) = composeFiltered(map, reduce).asOptionalInitializer()
 
-inline fun <T, R, reified A : Any> FilteredOptionalInitializer<T, A>.composeFilteredOptional(
+
+inline fun <T, R, reified A : Any> FilteredOptionalInitializer<T, A>.composeFiltered(
         crossinline map: (T) -> R,
         crossinline reduce: T.(R) -> T,
-        block: FilteredOptionalInitializer<R, A>.() -> Unit
-) = composeOptional(this, { filter(it) }, { filter(it) }, map, reduce).run(block)
+        block: FilteredOptionalInitializer<R, A>.() -> Unit = {}
+) = composeFiltered(map, reduce).run(block)
 
-inline fun <T, R, reified A : Any> FilteredOptionalInitializer<T, A>.composeFilteredOptional(
+inline fun <T, R, reified A : Any> FilteredOptionalInitializer<T, A>.composeFiltered(
         crossinline map: (T) -> R,
         crossinline reduce: T.(R) -> T
-): FilteredOptionalInitializer<R, A> = composeOptional(this, { filter(it) }, { filter(it) }, map, reduce)
+) = composeFiltered(this, { filter(it) }, { filter(it) }, map, reduce)
 
-inline fun <T, R, reified A : Any> composeOptional(
+inline fun <T, R, reified A : Any> composeFiltered(
         initializer: FilteredOptionalInitializer<T, A>,
         crossinline transformMiddleware: (FilteredMiddleware<R?, A>) -> FilteredMiddleware<R?, A>,
         crossinline transformReducer: (FilteredReducer<R, A>) -> FilteredReducer<R, A>,

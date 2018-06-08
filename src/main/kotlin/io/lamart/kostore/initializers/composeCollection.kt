@@ -2,29 +2,52 @@ package io.lamart.kostore.initializers
 
 import io.lamart.kostore.*
 
-fun <T> Initializer<Collection<T>>.composeCollection(predicate: (state: T, action: Any) -> Boolean, block: OptionalInitializer<T>.() -> Unit) =
-        composeCollection(predicate).run(block)
+fun <T> Initializer<Collection<T>>.composeCollection(
+        predicate: (state: T, action: Any) -> Boolean,
+        block: OptionalInitializer<T>.() -> Unit
+) = composeCollection(predicate).run(block)
 
-fun <T> Initializer<Collection<T>>.composeCollection(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        composeCollection(this, { filter(it) }, { filter(it) }, predicate).toOptionalInitializer()
+fun <T> Initializer<Collection<T>>.composeCollection(
+        predicate: (state: T, action: Any) -> Boolean
+) = toOptionalInitializer().composeFilteredCollection(predicate).asOptionalInitializer()
 
-inline fun <T, reified A : Any> FilteredInitializer<Collection<T>, A>.composeFilteredCollection(crossinline predicate: (state: T, action: A) -> Boolean, block: FilteredOptionalInitializer<T, A> .() -> Unit) =
-        composeFilteredCollection(predicate).let(block)
+inline fun <T, reified A : Any> FilteredInitializer<Collection<T>, A>.composeFilteredCollection(
+        crossinline predicate: (state: T, action: A) -> Boolean,
+        block: FilteredOptionalInitializer<T, A> .() -> Unit
+) = composeFilteredCollection(predicate).run(block)
 
-inline fun <T, reified A : Any> FilteredInitializer<Collection<T>, A>.composeFilteredCollection(crossinline predicate: (state: T, action: A) -> Boolean): FilteredOptionalInitializer<T, A> =
-        composeCollection(this, { filter(it) }, { filter(it) }, predicate)
+inline fun <T, reified A : Any> FilteredInitializer<Collection<T>, A>.composeFilteredCollection(
+        crossinline predicate: (state: T, action: A) -> Boolean
+) = toOptionalInitializer().composeFilteredCollection(predicate)
 
-inline fun <T, reified A : Any> composeCollection(
-        initializer: FilteredInitializer<Collection<T>, A>,
+fun <T> OptionalInitializer<Collection<T>>.composeCollection(
+        predicate: (state: T, action: Any) -> Boolean,
+        block: OptionalInitializer<T>.() -> Unit
+) = composeCollection(predicate).run(block)
+
+fun <T> OptionalInitializer<Collection<T>>.composeCollection(
+        predicate: (state: T, action: Any) -> Boolean
+) = composeFilteredCollection(predicate).asOptionalInitializer()
+
+inline fun <T, reified A : Any> FilteredOptionalInitializer<Collection<T>, A>.composeFilteredCollection(
+        crossinline predicate: (state: T, action: A) -> Boolean,
+        block: FilteredOptionalInitializer<T, A> .() -> Unit
+) = composeFilteredCollection(predicate).run(block)
+
+inline fun <T, reified A : Any> FilteredOptionalInitializer<Collection<T>, A>.composeFilteredCollection(
+        crossinline predicate: (state: T, action: A) -> Boolean
+) = composeFilteredCollection(this, { filter(it) }, { filter(it) }, predicate)
+
+inline fun <T, reified A : Any> composeFilteredCollection(
+        initializer: FilteredOptionalInitializer<Collection<T>, A>,
         crossinline transformMiddleware: (FilteredMiddleware<T?, A>) -> FilteredMiddleware<T?, A>,
         crossinline transformReducer: (FilteredReducer<T, A>) -> FilteredReducer<T, A>,
         crossinline predicate: (state: T, action: A) -> Boolean
 ): FilteredOptionalInitializer<T, A> = object : FilteredOptionalInitializer<T, A> {
 
-
     override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) {
         initializer.addMiddleware { getState, dispatch, action, next ->
-            transformMiddleware(middleware).invoke({ getState().find { predicate(it, action) } }, dispatch, action, next)
+            transformMiddleware(middleware).invoke({ getState()?.find { predicate(it, action) } }, dispatch, action, next)
         }
     }
 
@@ -41,6 +64,5 @@ inline fun <T, reified A : Any> composeCollection(
                 }
         }
     }
-
 
 }

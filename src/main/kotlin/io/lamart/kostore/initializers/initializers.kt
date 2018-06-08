@@ -2,7 +2,6 @@ package io.lamart.kostore.initializers
 
 import io.lamart.kostore.FilteredMiddleware
 import io.lamart.kostore.FilteredReducer
-import io.lamart.kostore.filter
 
 
 interface Initializer<T> : FilteredInitializer<T, Any>
@@ -25,10 +24,10 @@ interface FilteredOptionalInitializer<T, out A : Any> {
 
 }
 
-internal inline fun <T, reified A : Any> FilteredInitializer<T, A>.toInitializer(): Initializer<T> =
+inline fun <T, reified A : Any> FilteredInitializer<T, A>.asInitializer(): Initializer<T> =
         object : Initializer<T> {
 
-            private val initializer = this@toInitializer
+            private val initializer = this@asInitializer
 
             override fun addMiddleware(middleware: FilteredMiddleware<T, Any>) =
                     initializer.addMiddleware(middleware)
@@ -38,10 +37,10 @@ internal inline fun <T, reified A : Any> FilteredInitializer<T, A>.toInitializer
 
         }
 
-internal inline fun <T, reified A : Any> FilteredOptionalInitializer<T, A>.toOptionalInitializer(): OptionalInitializer<T> =
+inline fun <T, reified A : Any> FilteredOptionalInitializer<T, A>.asOptionalInitializer(): OptionalInitializer<T> =
         object : OptionalInitializer<T> {
 
-            private val initializer = this@toOptionalInitializer
+            private val initializer = this@asOptionalInitializer
 
             override fun addMiddleware(middleware: FilteredMiddleware<T?, Any>) =
                     initializer.addMiddleware(middleware)
@@ -49,4 +48,17 @@ internal inline fun <T, reified A : Any> FilteredOptionalInitializer<T, A>.toOpt
             override fun addReducer(reducer: FilteredReducer<T, Any>) =
                     initializer.addReducer(reducer)
 
+        }
+
+inline fun <T, reified A : Any> FilteredInitializer<T, A>.toOptionalInitializer(): FilteredOptionalInitializer<T, A> =
+        object : FilteredOptionalInitializer<T, A> {
+            private val initializer = this@toOptionalInitializer
+
+            override fun addMiddleware(middleware: FilteredMiddleware<T?, A>) =
+                    initializer.addMiddleware(middleware)
+
+            override fun addReducer(reducer: FilteredReducer<T, A>) {
+                initializer.addReducer(reducer)
+
+            }
         }
