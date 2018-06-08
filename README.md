@@ -100,12 +100,12 @@ fun networkMiddleware(networkOperation: NetworkOperation): Middleware<LoginState
 ```
 Calling `next` basically passes it parameter to the `reducer`. Whenever state is `LoggedIn` or `NotLoggedIn` it needs to be persisted.
 ```kotlin
-fun saveMiddleware(save: (LoginState) -> Unit): Middleware<LoginState> =
+fun persistMiddleware(persist: (LoginState) -> Unit): Middleware<LoginState> =
         afterNext { getState: () -> LoginState, dispatch: (Any) -> Unit, action: Any, next: (Any) -> Unit ->
             val state = getState()
 
             if (state !== LoginState.LoggingIn)
-                save(state)
+                persist(state)
 
         }
 ``` 
