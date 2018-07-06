@@ -1,9 +1,9 @@
 package io.lamart.kostore.examples
 
 import io.lamart.kostore.*
-import io.lamart.kostore.initializers.compose
-import io.lamart.kostore.utils.TableReducer
-import io.lamart.kostore.utils.creates
+import io.lamart.kostore.composition.compose
+import io.lamart.kostore.utility.TableReducer
+import io.lamart.kostore.utility.creates
 
 sealed class LoginState {
     data class NotLoggedIn(val reason: String? = null) : LoginState()
@@ -72,7 +72,8 @@ fun networkMiddleware(networkOperation: NetworkOperation): Middleware<LoginState
 
 
 fun persistMiddleware(persist: (LoginState) -> Unit): Middleware<LoginState> =
-        afterNext { getState: () -> LoginState, dispatch: (Any) -> Unit, action: Any, next: (Any) -> Unit ->
+        { getState: () -> LoginState, dispatch: (Any) -> Unit, action: Any, next: (Any) -> Unit ->
+            next(action)
             val state = getState()
 
             if (state !== LoginState.LoggingIn)
@@ -96,7 +97,7 @@ data class AppState(val state: LoginState = LoginState.NotLoggedIn())
 val store: Store<AppState> = Store(AppState()) {
 
     // compose facilitates the working between a state (AppState) and a substate (LoginState)
-    compose({ it.state }, { copy(state = it) }) {
+    compose({ state }, { copy(state = it) }) {
         addReducer(loginReducer)
         addMiddleware(loginMiddleware())
     }

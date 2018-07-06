@@ -1,14 +1,13 @@
 package io.lamart.kostore
 
-import io.lamart.kostore.input.IntWrapper
-import io.lamart.kostore.utils.ListObserver
+import io.lamart.kostore.utility.ListObserver
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ObserverTests {
 
     /**
-     * Whenever a action reaches the reducer, the store should emit it output. In this test the action, does not hit a middleware or reducer so the resulting state is same as the initial state.
+     * Whenever a action reaches the reducer, the store should emit it output. In this sendRubbish the action, does not hit a middleware or reducer so the resulting state is same as the initial state.
      */
 
     @Test
@@ -19,7 +18,7 @@ class ObserverTests {
     }
 
     /**
-     * This test proves the working of a ListObserver. It is a List of observers that are called sequentially.
+     * This sendRubbish proves the working of a ListObserver. It is a List of observers that are called sequentially.
      */
 
     @Test
@@ -41,14 +40,6 @@ class ObserverTests {
 
         combine(observer, observer).invoke(0)
         assertEquals(2, hits)
-    }
-
-    @Test
-    fun mapTest() {
-        val intObserver: Observer<Int> = { assertEquals(0, it) }
-        val wrapperObserver: Observer<IntWrapper> = intObserver.compose { it.number }
-
-        wrapperObserver(IntWrapper(0))
     }
 
 }

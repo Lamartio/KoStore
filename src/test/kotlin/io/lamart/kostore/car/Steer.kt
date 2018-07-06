@@ -1,8 +1,10 @@
 package io.lamart.kostore.car
 
 import io.lamart.kostore.FilteredReducer
+import io.lamart.kostore.Reducer
+import io.lamart.kostore.filter
 
-val buttonReducer: FilteredReducer<Button, ButtonAction> = { button, action ->
+val buttonReducer: Reducer<Button> = filter { button, action: ButtonAction ->
     when (action) {
         is ButtonAction.Press -> button.copy(name = button.name, pressed = true)
         is ButtonAction.UnPress -> button.copy(name = button.name, pressed = false)

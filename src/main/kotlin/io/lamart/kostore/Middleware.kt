@@ -19,46 +19,11 @@ inline fun <T, reified A : Any> filter(crossinline middleware: FilteredMiddlewar
 
 @Suppress("NAME_SHADOWING")
 fun <T> combine(
-        accumulated: Middleware<T>,
-        middleware: Middleware<T>
+        previous: Middleware<T>,
+        next: Middleware<T>
 ): Middleware<T> =
         { getState, dispatch, action, next ->
-            accumulated(getState, dispatch, action, { action ->
-                middleware(getState, dispatch, action, next)
+            previous(getState, dispatch, action, { action ->
+                next(getState, dispatch, action, next)
             })
-        }
-
-@Suppress("NAME_SHADOWING")
-inline fun <T, reified A : Any> combineFiltered(
-        crossinline accumulated: FilteredMiddleware<T, A>,
-        crossinline middleware: FilteredMiddleware<T, A>
-): FilteredMiddleware<T, A> =
-        { getState, dispatch, action, next ->
-            accumulated(getState, dispatch, action, { action ->
-                filter(middleware).invoke(getState, dispatch, action, next)
-            })
-        }
-
-fun <T> beforeNext(middleware: Middleware<T>): Middleware<T> =
-        { getState, dispatch, action, next ->
-            middleware(getState, dispatch, action, next)
-            next(action)
-        }
-
-inline fun <T, reified A : Any> beforeNextFiltered(crossinline middleware: FilteredMiddleware<T, A>): Middleware<T> =
-        { getState, dispatch, action, next ->
-            filter(middleware).invoke(getState, dispatch, action, next)
-            next(action)
-        }
-
-fun <T> afterNext(middleware: Middleware<T>): Middleware<T> =
-        { getState, dispatch, action, next ->
-            next(action)
-            middleware(getState, dispatch, action, next)
-        }
-
-inline fun <T, reified A : Any> afterNextFiltered(crossinline middleware: FilteredMiddleware<T, A>): Middleware<T> =
-        { getState, dispatch, action, next ->
-            next(action)
-            filter(middleware).invoke(getState, dispatch, action, next)
         }

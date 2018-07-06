@@ -1,4 +1,4 @@
-package io.lamart.kostore.utils
+package io.lamart.kostore.utility
 
 import io.lamart.kostore.Middleware
 

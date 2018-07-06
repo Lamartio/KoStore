@@ -1,7 +1,7 @@
 package io.lamart.kostore.input
 
-import io.lamart.kostore.utils.TableReducer
-import io.lamart.kostore.utils.creates
+import io.lamart.kostore.utility.TableReducer
+import io.lamart.kostore.utility.creates
 
 
 internal data class Car(val steer: Steer, val gears: Gears) {
@@ -49,7 +49,7 @@ internal val steerReducer = TableReducer<Steer> {
 
 internal val hornReducer = TableReducer<Horn> {
     state<Horn.Idle>().withAction<Honk.Start>().creates { Horn.Honking }
-    state<Horn.Honking>().withAction<Honk.Stop>().creates { Horn.Honking }
+    state<Horn.Honking>().withAction<Honk.Stop>().creates { Horn.Idle }
 }
 
 internal val gearsReducer = TableReducer<Gears> {

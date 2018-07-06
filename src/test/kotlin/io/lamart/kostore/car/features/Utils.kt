@@ -2,24 +2,21 @@ package io.lamart.kostore.car.features
 
 import io.lamart.kostore.Store
 import io.lamart.kostore.car.*
-import io.lamart.kostore.initializers.*
+import io.lamart.kostore.composition.*
 
 internal fun newStore(): Store<Car> = Store(Car()) {
 
-    compose({ it.wheels }, { copy(wheels = it) })
-            .filter<Map<Position, Wheel>, WheelAction.Change>()
-            .composeFilteredMap({ it.position })
+    compose({ wheels }, { copy(wheels = it) })
+            .composeMap { position, action -> action is WheelAction.Change && position == action.position }
             .addReducer(wheelReducer)
 
-    compose({ it.seats }, { copy(seats = it) })
-            .filter<List<Seat>, SeatAction>()
-            .composeFilteredList { seat, action -> seat.id == action.seatId }
-            .addReducer(reducer)
+    compose({ seats }, { copy(seats = it) })
+            .composeList { seat, action -> action is SeatAction && seat.id == action.seatId }
+            .addReducer(seatReducer)
 
-    compose({ it.steer }, { copy(steer = it) })
-            .compose({ it.buttons }, { copy(buttons = it) })
-            .filter<Collection<Button>, ButtonAction>()
-            .composeFilteredCollection({ state, action -> action.name == state.name })
+    compose({ steer }, { copy(steer = it) })
+            .compose({ buttons }, { copy(buttons = it) })
+            .composeCollection({ state, action -> action is ButtonAction && state.name == action.name })
             .addReducer(buttonReducer)
 
 }
