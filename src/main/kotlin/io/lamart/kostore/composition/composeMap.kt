@@ -33,7 +33,7 @@ class ComposeOptionalMapOptionalInitializer<K, V>(
 
     override fun addMiddleware(middleware: Middleware<V?>) {
         initializer.addMiddleware { getState, dispatch, action, next ->
-            middleware({ getState()?.entries?.find { predicate(it.key, action) }?.value }, dispatch, action, next)
+            middleware({ getState()?.entries?.toList()?.find { predicate(it.key, action) }?.value }, dispatch, action, next)
         }
     }
 

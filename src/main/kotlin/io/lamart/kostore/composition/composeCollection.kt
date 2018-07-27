@@ -33,7 +33,7 @@ class ComposeOptionalCollectionOptionalInitializer<T>(
 
     override fun addMiddleware(middleware: Middleware<T?>) {
         initializer.addMiddleware { getState, dispatch, action, next ->
-            middleware({ getState()?.find { predicate(it, action) } }, dispatch, action, next)
+            middleware({ getState()?.toList()?.find { predicate(it, action) } }, dispatch, action, next)
         }
     }
 
