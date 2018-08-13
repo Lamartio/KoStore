@@ -12,7 +12,7 @@ In Redux you create an immutable object that reflects the state of your applicat
 - When the user is logged in we show a home screen.
 
 ---
-@title(The Store)
+@title[The Store]
 ``` Kotlin
 data class LoginAction(val name: String, val pass:String)
 
