@@ -60,9 +60,9 @@ A reducer is a function that has as input the current state and the action and r
 Middleware
 ``` Kotlin
 class Store(
-  var state: User = User()
+  var state: User = User(),
+  var middleware: (action: Any, next: (action: Any) -> Unit) -> Unit,
   var reducer: (state: User, action: Any) -> User
-  var middleware: (action: Any, next: (action: Any) -> Unit) -> Unit
 ) {
 
   fun dispatch(action: Any) {
@@ -75,7 +75,7 @@ class Store(
 
 }
 ```
-@[4](A middleware function is added to the store)
+@[3](A middleware function is added to the store)
 @[7-9](The middleware function is called instead of the reducer)
 @[8,11-13](The middleware can call the reducer as many times as it needs)
 
@@ -103,7 +103,23 @@ Often you want to check whether the action is usable in the current state and th
 Sometimes a received action is the trigger for creating a new action that needs to do full trip of store -> middleware -> reducer -> observer. Therefore the second parameter gives you access to the 'Store.dispatch'
 
 ---
-@title[Middleware Explained: Preperation]
+@title[Overview]
+What we have seen so far:
+
+``` Kotlin 
+Store = User + Middleware + Reducer + Observer
+
+typealias Middleware = (
+  getState: () -> User, 
+  dispatch: (action: Any) -> Unit, 
+  action: Any, 
+  next: (action: Any) -> Unit
+) -> Unit
+
+typealias Reducer = (state: User, action: Any) -> User
+```
++++
+@title[Example: Preperation]
 Example: Preperation
 ``` Kotlin
 data class LoginAction(val name: String, val pass:String)
@@ -119,7 +135,7 @@ private fun login(name: String, pass: String, onSuccess: () -> Unit, onError: ()
 @[1-4](Define some actions that will be sent to the reducer.)
 @[6-8](Define a function that can handle the asyncronous network call.)
 
----
++++
 @title[Example: Middleware]
 Example: Middleware
 ``` Kotlin
@@ -144,9 +160,9 @@ fun middleware(getState: () -> User, dispatch: (Any) -> Unit, action: Any, next:
 @[8-9](After the login: Send either the success or the failure action)
 @[12](NOTE: When the middleware doesn't know how to handle this `action`, it will just call `next`)
 
----
-@title[Middleware: Reducer]
-Middleware: Reducer
++++
+@title[Example: Reducer]
+Example: Reducer
 ``` Kotlin
 fun reducer(state: User, action: Any) {
   when(action) {
@@ -160,3 +176,44 @@ fun reducer(state: User, action: Any) {
 @[1](The actions sent by the middleware are received by the reducer)
 @[3-4](For now we only handle success and failure)
 
+---
+@title[Observer]
+Observer
+``` Kotlin
+class Store(
+  var state: User = User(),
+  var middleware: (action: Any, next: (action: Any) -> Unit) -> Unit,
+  var reducer: (state: User, action: Any) -> User,
+  var observer: (User) -> Unit
+) {
+
+  fun dispatch(action: Any) {
+    middleware(action, ::next)
+  }
+  
+  private fun next(action: Any) {
+    val nextState = reducer(state, action)
+  
+    state = nextState
+    observer(nextState)
+  }
+
+}
+```
+@[5](Add the final piece: the observer)
+@[12,16](Call it after updating the state)
+
+Note:
+The observer will be called everytime the state got changed. It will emit the new, immutable, state to everyone that needs to receive it. 
+
+In the example that was used in the beginning; the UI can now switch between a login screen and a home screen.
+
+---
+@title[Coming soon]
+Coming soon
+``` Kotlin
+  // TODO Combining multiple reducer into one
+  // TODO Combining multiple middlewares into one
+  // TODO Working with ReactiveExtensions
+  // TODO Create reducer and middleware for a sub-state
+```
