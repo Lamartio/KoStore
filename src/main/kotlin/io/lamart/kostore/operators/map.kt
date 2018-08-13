@@ -1,23 +1,11 @@
-package io.lamart.kostore.composition
+package io.lamart.kostore.operators
 
 import io.lamart.kostore.Initializer
 import io.lamart.kostore.Middleware
 import io.lamart.kostore.OptionalInitializer
 import io.lamart.kostore.Reducer
 
-fun <T> Initializer<T>.mapAction(mapAction: (Any) -> Any, block: Initializer<T>.() -> Unit) =
-        this.mapAction(mapAction).run(block)
-
-fun <T> Initializer<T>.mapAction(mapAction: (Any) -> Any): Initializer<T> =
-        MapActionInitializer(this, mapAction)
-
-fun <T> OptionalInitializer<T>.mapAction(mapAction: (Any) -> Any, block: OptionalInitializer<T>.() -> Unit) =
-        this.mapAction(mapAction).run(block)
-
-fun <T> OptionalInitializer<T>.mapAction(mapAction: (Any) -> Any): OptionalInitializer<T> =
-        MapActionOptionalInitializer(this, mapAction)
-
-class MapActionInitializer<T>(
+class MapInitializer<T>(
         private val initializer: Initializer<T>,
         private val mapAction: (Any) -> Any
 ) : Initializer<T> {
@@ -36,7 +24,7 @@ class MapActionInitializer<T>(
 
 }
 
-class MapActionOptionalInitializer<T>(
+class MapOptionalInitializer<T>(
         private val initializer: OptionalInitializer<T>,
         private val mapAction: (Any) -> Any
 ) : OptionalInitializer<T> {

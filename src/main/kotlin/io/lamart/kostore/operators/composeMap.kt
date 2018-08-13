@@ -1,4 +1,4 @@
-package io.lamart.kostore.composition
+package io.lamart.kostore.operators
 
 import io.lamart.kostore.*
 import io.lamart.kostore.utility.toOptional
@@ -9,7 +9,7 @@ fun <K, V> Initializer<Map<K, V>>.composeMap(
 ) = composeMap(predicate).run(block)
 
 fun <K, V> Initializer<Map<K, V>>.composeMap(predicate: (key: K, action: Any) -> Boolean): OptionalInitializer<V> =
-        ComposeMapOptionalInitializer(this, predicate)
+        ComposeMapInitializer(this, predicate)
 
 fun <K, V> OptionalInitializer<Map<K, V>>.composeMap(
         predicate: (key: K, action: Any) -> Boolean,
@@ -17,15 +17,15 @@ fun <K, V> OptionalInitializer<Map<K, V>>.composeMap(
 ) = composeMap(predicate).run(block)
 
 fun <K, V> OptionalInitializer<Map<K, V>>.composeMap(predicate: (key: K, action: Any) -> Boolean): OptionalInitializer<V> =
-        ComposeOptionalMapOptionalInitializer(this, predicate)
+        ComposeMapOptionalInitializer(this, predicate)
 
-class ComposeMapOptionalInitializer<K, V>(
+class ComposeMapInitializer<K, V>(
         private val initializer: Initializer<Map<K, V>>,
         private val predicate: (key: K, action: Any) -> Boolean,
         private val toMutable: (Map<K, V>) -> MutableMap<K, V> = { it.toMutableMap() }
-) : OptionalInitializer<V> by ComposeOptionalMapOptionalInitializer(initializer.toOptional(), predicate, toMutable)
+) : OptionalInitializer<V> by ComposeMapOptionalInitializer(initializer.toOptional(), predicate, toMutable)
 
-class ComposeOptionalMapOptionalInitializer<K, V>(
+class ComposeMapOptionalInitializer<K, V>(
         private val initializer: OptionalInitializer<Map<K, V>>,
         private val predicate: (key: K, action: Any) -> Boolean,
         private val toMutable: (Map<K, V>) -> MutableMap<K, V> = { it.toMutableMap() }

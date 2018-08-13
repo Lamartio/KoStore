@@ -6,8 +6,10 @@ typealias FilteredReducer<T, A> = (T, A) -> T
 
 inline fun <T, reified A : Any> filter(crossinline reducer: FilteredReducer<T, A>): Reducer<T> =
         { state, action ->
-            if (action is A) reducer(state, action)
-            else state
+            when (action) {
+                is A -> reducer(state, action)
+                else -> state
+            }
         }
 
 fun <T> combine(previous: Reducer<T>, next: Reducer<T>): Reducer<T> =

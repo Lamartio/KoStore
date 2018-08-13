@@ -1,7 +1,5 @@
 package io.lamart.kostore
 
-import io.lamart.kostore.composition.compose
-import io.lamart.kostore.input.IntWrapper
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -19,12 +19,17 @@ open class Store<T>(
 
     override fun getState(): T = state
 
-    override fun dispatch(action: Any): Unit = middleware(
-            ::getState,
-            ::dispatch,
-            action,
-            { reducer(state, it).also { state = it }.also(observers) }
-    )
+    override fun dispatch(action: Any): Unit =
+            middleware(
+                    ::getState,
+                    ::dispatch,
+                    action
+            ) { action ->
+                reducer(state, action).let { state ->
+                    this.state = state
+                    observers(state)
+                }
+            }
 
     override fun addObserver(observer: Observer<T>) {
         observers.add(observer)

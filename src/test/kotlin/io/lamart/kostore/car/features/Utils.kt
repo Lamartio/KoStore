@@ -2,7 +2,7 @@ package io.lamart.kostore.car.features
 
 import io.lamart.kostore.Store
 import io.lamart.kostore.car.*
-import io.lamart.kostore.composition.*
+import io.lamart.kostore.operators.*
 
 internal fun newStore(): Store<Car> = Store(Car()) {
 

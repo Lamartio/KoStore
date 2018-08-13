@@ -8,7 +8,7 @@ open class TableReducer<T> : Reducer<T> {
 
     constructor()
 
-    constructor(init: TableReducer<T>.() -> Unit) {
+    constructor(init: TableReducer<T>.() -> Unit) : this() {
         init()
     }
 
@@ -24,7 +24,7 @@ open class TableReducer<T> : Reducer<T> {
     inner class Action<out T, out S : T>(private val statePredicate: S.() -> Boolean) {
 
         fun withAnyAction(actionPredicate: S.(Any) -> Boolean = { true }): Result<S, Any> =
-                withAction (actionPredicate)
+                withAction(actionPredicate)
 
         fun withAction(actionPredicate: S.(Any) -> Boolean): Result<S, Any> =
                 withAction<Any>(actionPredicate)

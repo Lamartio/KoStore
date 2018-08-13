@@ -1,6 +1,6 @@
 package io.lamart.kostore
 
-import io.lamart.kostore.input.*
+import io.lamart.kostore.examples.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

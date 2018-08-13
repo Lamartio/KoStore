@@ -1,4 +1,4 @@
-package io.lamart.kostore.composition
+package io.lamart.kostore.operators
 
 import io.lamart.kostore.*
 import io.lamart.kostore.utility.toOptional
@@ -9,7 +9,7 @@ fun <T> Initializer<Set<T>>.composeSet(
 ) = composeSet(predicate).run(block)
 
 fun <T> Initializer<Set<T>>.composeSet(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        ComposeSetOptionalInitializer(this, predicate)
+        ComposeSetInitializer(this, predicate)
 
 fun <T> OptionalInitializer<Set<T>>.composeSet(
         predicate: (state: T, action: Any) -> Boolean,
@@ -17,15 +17,15 @@ fun <T> OptionalInitializer<Set<T>>.composeSet(
 ) = composeSet(predicate).run(block)
 
 fun <T> OptionalInitializer<Set<T>>.composeSet( predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        ComposeOptionalSetOptionalInitializer(this, predicate)
+        ComposeSetOptionalInitializer(this, predicate)
 
-class ComposeSetOptionalInitializer<T>(
+class ComposeSetInitializer<T>(
         private val initializer: Initializer<Set<T>>,
         private val predicate: (state: T, action: Any) -> Boolean,
         private val toMutable: (Set<T>) -> MutableSet<T> = { it.toMutableSet() }
-) : OptionalInitializer<T> by ComposeOptionalSetOptionalInitializer(initializer.toOptional(), predicate, toMutable)
+) : OptionalInitializer<T> by ComposeSetOptionalInitializer(initializer.toOptional(), predicate, toMutable)
 
-class ComposeOptionalSetOptionalInitializer<T>(
+class ComposeSetOptionalInitializer<T>(
         private val initializer: OptionalInitializer<Set<T>>,
         private val predicate: (state: T, action: Any) -> Boolean,
         private val toMutable: (Set<T>) -> MutableSet<T> = { it.toMutableSet() }
