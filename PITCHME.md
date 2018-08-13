@@ -90,7 +90,7 @@ fun middleware(
 Note:
 The past slide showed a simplified version of the middleware with only two parameters. These two parameters cover the essence of a middleware, but in some occasions you need more than those.
 
-+++
+---
 ``` Kotlin
 data class LoginAction(val name: String, val pass:String)
 object LoadingAction
@@ -109,12 +109,24 @@ fun middleware(getState: () -> User, dispatch: (Any) -> Unit, action: Any, next:
         action.name, 
         action.pass, 
         { next(SuccessAction) }, 
-        { next(ErrorAction) }
+        { next(FailureAction) }
       )
     }
     else -> next(action)
   }
 }
 
-
+fun reducer(state: User, action: Any) {
+  when(action) {
+    is SuccessAction -> state.copy(isLoggedIn = true)
+    is FailuerAction -> state.copy(isLoggedIn = false)
+    else -> state
+  }
+}
 ```
+
+@[1-4](Define some actions that will be sent to the reducer.)
+@[6-8](Define a function that can handle the asyncronous network call.)
+@[13](Before the login: Send the loading action)
+@[17-18](After the login: Send either the success or the failure action)
+@[27-28](For now we only handle success and failure)
