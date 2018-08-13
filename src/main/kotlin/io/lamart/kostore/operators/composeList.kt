@@ -1,4 +1,4 @@
-package io.lamart.kostore.composition
+package io.lamart.kostore.operators
 
 import io.lamart.kostore.*
 import io.lamart.kostore.utility.toOptional
@@ -9,7 +9,7 @@ fun <T> Initializer<List<T>>.composeList(
 ) = composeList(predicate).run(block)
 
 fun <T> Initializer<List<T>>.composeList(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        ComposeListOptionalInitializer(this, predicate)
+        ComposeListInitializer(this, predicate)
 
 fun <T> OptionalInitializer<List<T>>.composeList(
         predicate: (state: T, action: Any) -> Boolean,
@@ -17,15 +17,15 @@ fun <T> OptionalInitializer<List<T>>.composeList(
 ) = composeList(predicate).run(block)
 
 fun <T> OptionalInitializer<List<T>>.composeList(predicate: (state: T, action: Any) -> Boolean): OptionalInitializer<T> =
-        ComposeOptionalListOptionalInitializer(this, predicate)
+        ComposeListOptionalInitializer(this, predicate)
 
-class ComposeListOptionalInitializer<T>(
+class ComposeListInitializer<T>(
         private val initializer: Initializer<List<T>>,
         private val predicate: (state: T, action: Any) -> Boolean,
         private val toMutable: (List<T>) -> MutableList<T> = { it.toMutableList() }
-) : OptionalInitializer<T> by ComposeOptionalListOptionalInitializer(initializer.toOptional(), predicate, toMutable)
+) : OptionalInitializer<T> by ComposeListOptionalInitializer(initializer.toOptional(), predicate, toMutable)
 
-class ComposeOptionalListOptionalInitializer<T>(
+class ComposeListOptionalInitializer<T>(
         private val initializer: OptionalInitializer<List<T>>,
         private val predicate: (state: T, action: Any) -> Boolean,
         private val toMutable: (List<T>) -> MutableList<T> = { it.toMutableList() }
@@ -33,18 +33,23 @@ class ComposeOptionalListOptionalInitializer<T>(
 
     override fun addMiddleware(middleware: Middleware<T?>) {
         initializer.addMiddleware { getState, dispatch, action, next ->
-            middleware({ getState()?.toList()?.find { predicate(it, action) } }, dispatch, action, next)
+            middleware(
+                    { getState()?.toList()?.find { predicate(it, action) } },
+                    dispatch,
+                    action,
+                    next
+            )
         }
     }
 
     override fun addReducer(reducer: Reducer<T>) {
         initializer.addReducer { list, action ->
-            val index = list.indexOfFirst { predicate(it, action) }
-
-            if (index != -1)
-                toMutable(list).apply { set(index, reducer(get(index), action)) }
-            else
-                list
+            list.indexOfFirst { predicate(it, action) }.let { index ->
+                when {
+                    index != -1 -> toMutable(list).apply { set(index, reducer(get(index), action)) }
+                    else -> list
+                }
+            }
         }
     }
 

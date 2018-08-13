@@ -1,4 +1,4 @@
-package io.lamart.kostore.input
+package io.lamart.kostore.examples
 
 import io.lamart.kostore.utility.TableReducer
 import io.lamart.kostore.utility.creates

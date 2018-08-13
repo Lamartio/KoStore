@@ -10,7 +10,7 @@ import io.lamart.kostore.shouldBe
 
 
 private val Store<Car>.cruiseControlButton: Button
-    get() = getState().steer.buttons.first { it.name == "collection cruise control" }
+    get() = getState().steer.buttons.first { it.name == "set cruise control" }
 
 class PressSteerButtonFeature : Feature({
 
@@ -18,14 +18,18 @@ class PressSteerButtonFeature : Feature({
 
     given("a steer with cruise control buttons") {
 
-        on("pressing the 'collection cruise control button'") {
-            ButtonAction.Press("collection cruise control").let(store::dispatch)
-            it("should become pressed") { store.cruiseControlButton.pressed shouldBe true }
+        on("pressing the 'set cruise control button'") {
+            ButtonAction.Press("set cruise control").let(store::dispatch)
+            it("should become pressed") {
+                store.cruiseControlButton.pressed shouldBe true
+            }
         }
 
-        on("unpressing the 'collection cruise control button'") {
-            ButtonAction.UnPress("collection cruise control").let(store::dispatch)
-            it("should become unpressed") { store.cruiseControlButton.pressed shouldBe false }
+        on("unpressing the 'set cruise control button'") {
+            ButtonAction.UnPress("set cruise control").let(store::dispatch)
+            it("should become unpressed") {
+                store.cruiseControlButton.pressed shouldBe false
+            }
         }
     }
 

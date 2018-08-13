@@ -12,10 +12,14 @@ class ObserverTests {
 
     @Test
     fun addObserver() {
-        Store(0)
-                .apply { addObserver { assertEquals(it, 0) } }
-                .apply { dispatch("") }
+        Store(0).apply {
+            addObserver(::observer)
+            dispatch("")
+            removeObserver(::observer)
+        }
     }
+
+    private fun observer(state: Int) = assertEquals(0, state)
 
     /**
      * This sendRubbish proves the working of a ListObserver. It is a List of observers that are called sequentially.
