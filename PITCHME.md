@@ -5,10 +5,10 @@ data class User(
   val name: String = "Danny", 
   val isLoggedIn: Boolean = false
 )
+
+@[3]
 ```
-
 Note:
-- Just testing out how notes work
-
-
---- Test 
+In Redux you create an immutable object that reflects the state of your application.
+- When the user is not logged in we show a login screen.
+- When the user is logged in we show a home screen.
