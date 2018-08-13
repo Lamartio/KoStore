@@ -28,7 +28,9 @@ class Store(
 @[7-9](Calling `dispatch` with a `LoginAction` instance should login the user.)
 
 Note: 
-The state is kept within a `Store` object that can render a new state whenever an action is given to  the `dispatch` function. In order the create a new state, `dispatch` will call the `middleware`, which will call the `reducer`, which will notify to observer. How this calling is done, will be explained further in this presentation.
+The state is kept within a `Store` object that can render a new state whenever an action is given to  the `dispatch` function. In order the create a new state, `dispatch` will call the `middleware`, which will call the `reducer`, which will notify to observer. 
+
+How this calling is done, will be explained further in this presentation.
 
 ---
 ``` Kotlin
@@ -38,7 +40,7 @@ class Store(
 ) {
 
   fun dispatch(action: Any) {
-    state = reducer(state,action)
+    state = reducer(state, action)
   }
 
 }
@@ -47,8 +49,33 @@ class Store(
 @[6-8](The reducer is called whenever an action is dispatched)
 
 Note:
-A reducer is a function that has as input the current state and an action and returns a new state. Such function is often simple and pure and thereby very easy to test.
+A reducer is a function that has as input the current state and the action and returns a new state. Such function is often simple and pure and thereby very easy to test.
 
 ---
+``` Kotlin
+class Store(
+  var state: User = User()
+  var reducer: (state: User, action: Any) -> User
+  var middleware: (action: Any, next: (action: Any) -> Unit) -> Unit
+) {
+
+  fun dispatch(action: Any) {
+    middleware(action, ::next)
+  }
+  
+  private fun next(action: Any) {
+    state = reducer(state, action) 
+  }
+
+}
+```
+@[4](A middleware function is added to the store)
+@[7](The middleware function is called)
+@[12](The middleware can call the reducer as many times as it needs)
+
 Note:
-A middleware function is the place in which all the side effeet can be handled. These can be for instance networking, persistence, logging. 
+Within the middleware
+- Asynchronisity like persisting or networking
+- Logging: Check the state before and after dispatching
+- Edit the current action or dispatch new actions
+
