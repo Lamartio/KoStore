@@ -12,7 +12,8 @@ In Redux you create an immutable object that reflects the state of your applicat
 - When the user is logged in we show a home screen.
 
 ---
-@title[The Store]
+@title[Store]
+Store
 ``` Kotlin
 data class LoginAction(val name: String, val pass:String)
 
@@ -34,6 +35,8 @@ The state is kept within a `Store` object that can render a new state whenever a
 How this calling is done, will be explained further in this presentation.
 
 ---
+@title[Reducer]
+Reducer
 ``` Kotlin
 class Store(
   var state: User = User()
@@ -53,6 +56,8 @@ Note:
 A reducer is a function that has as input the current state and the action and returns a new state. Such function is often simple and pure and thereby very easy to test.
 
 ---
+@title[Middleware]
+Middleware
 ``` Kotlin
 class Store(
   var state: User = User()
@@ -75,6 +80,8 @@ class Store(
 @[8,11-13](The middleware can call the reducer as many times as it needs)
 
 ---
+@title[Middleware Explained]
+Middleware Explained
 ``` Kotlin
 fun middleware(
   getState: () -> User, 
@@ -91,7 +98,13 @@ fun middleware(
 Note:
 The past slide showed a simplified version of the middleware with only two parameters. These two parameters cover the essence of a middleware, but in some occasions you need more than those.
 
+Often you want to check whether the action is usable in the current state and therefoe you can call the first parameter called `getState`
+
+Sometimes a received action is the trigger for creating a new action that needs to do full trip of store -> middleware -> reducer -> observer. Therefore the second parameter gives you access to the 'Store.dispatch'
+
 ---
+@title[Middleware Explained: Preperation]
+Example: Preperation
 ``` Kotlin
 data class LoginAction(val name: String, val pass:String)
 object LoadingAction
@@ -101,7 +114,15 @@ object FailureAction
 private fun login(name: String, pass: String, onSuccess: () -> Unit, onError: () -> Unit) {
  // login magic
 }
+```
 
+@[1-4](Define some actions that will be sent to the reducer.)
+@[6-8](Define a function that can handle the asyncronous network call.)
+
+---
+@title[Example: Middleware]
+Example: Middleware
+``` Kotlin
 fun middleware(getState: () -> User, dispatch: (Any) -> Unit, action: Any, next: (Any) -> Unit) {
   when(action) {
     is LoginAction -> {
@@ -116,7 +137,17 @@ fun middleware(getState: () -> User, dispatch: (Any) -> Unit, action: Any, next:
     else -> next(action)
   }
 }
+```
 
+@[4](Before the login: Send the loading action)
+@[5-10](Call the login function)
+@[8-9](After the login: Send either the success or the failure action)
+@[12](NOTE: When the middleware doesn't know how to handle this `action`, tt will just call `next`)
+
+---
+@title[Middleware: Reducer]
+Middleware: Reducer
+``` Kotlin
 fun reducer(state: User, action: Any) {
   when(action) {
     is SuccessAction -> state.copy(isLoggedIn = true)
@@ -126,10 +157,6 @@ fun reducer(state: User, action: Any) {
 }
 ```
 
-@[1-4](Define some actions that will be sent to the reducer.)
-@[6-8](Define a function that can handle the asyncronous network call.)
-@[10,13](Before the login: Send the loading action)
-@[14,18](Call the login function)
-@[17-18](After the login: Send either the success or the failure action)
-@[25-31](The action are received in the reducer)
-@[27-28](For now we only handle success and failure)
+@[1](The actions sent by the middleware are received in the reducer)
+@[3-4](For now we only handle success and failure)
+
