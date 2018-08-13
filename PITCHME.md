@@ -26,7 +26,7 @@ class Store(
 }
 ```
 
-@[7-9](Calling `dispatch` with a `LoginAction` instance should login the user)
+@[7-9](Calling dispatch with a LoginAction instance should login the user.)
 
 Note: 
 The state is kept within a `Store` object that can render a new state whenever an action is given to  the `dispatch` function. In order the create a new state, `dispatch` will call the `middleware`, which will call the `reducer`, which will notify to observer. How this calling is done, will be explained further in this presentation.
