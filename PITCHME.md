@@ -29,7 +29,7 @@ class Store(
 }
 ```
 
-@[5](Calling `dispatch` with a `LoginAction` instance should login the user)
+@[7-9](Calling `dispatch` with a `LoginAction` instance should login the user)
 
 Note: 
 The state is kept within a `Store` object that can render a new state whenever an action is given to  the `dispatch` function.
