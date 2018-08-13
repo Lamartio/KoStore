@@ -118,6 +118,7 @@ typealias Middleware = (
 
 typealias Reducer = (state: User, action: Any) -> User
 ```
+(press down for example)
 +++
 @title[Example: Preperation]
 Example: Preperation
