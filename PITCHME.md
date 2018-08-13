@@ -6,7 +6,7 @@ data class User(
   val isLoggedIn: Boolean = false
 )
 ```
-@[3](When the user is not logged in we show the login screen, otherwise we show the home screen.)
+@[3](When the user is not logged in we show the login screen\n, otherwise we show the home screen.)
 
 Note:
 In Redux you create an immutable object that reflects the state of your application. This state can be used to render the UI:
@@ -16,6 +16,8 @@ In Redux you create an immutable object that reflects the state of your applicat
 ---
 
 ``` Kotlin
+data class LoginAction(val name: String, val pass:String
+
 class Store(
   var state: User = User()
 ) {
@@ -27,7 +29,7 @@ class Store(
 }
 ```
 
-@[5](Calling `dispatch` with a `data class Login(val name: String, val pass:String)` instance should login the user)
+@[5](Calling `dispatch` with a `LoginAction` instance should login the user)
 
 Note: 
 The state is kept within a `Store` object that can render a new state whenever an action is given to  the `dispatch` function.
