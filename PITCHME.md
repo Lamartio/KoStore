@@ -127,6 +127,8 @@ fun reducer(state: User, action: Any) {
 
 @[1-4](Define some actions that will be sent to the reducer.)
 @[6-8](Define a function that can handle the asyncronous network call.)
-@[13](Before the login: Send the loading action)
+@[10,13](Before the login: Send the loading action)
+@[14,10](Call the login function)
 @[17-18](After the login: Send either the success or the failure action)
+@[25-31](The action are received in the reducer)
 @[27-28](For now we only handle success and failure)
