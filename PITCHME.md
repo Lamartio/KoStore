@@ -70,7 +70,7 @@ class Store(
 }
 ```
 @[4](A middleware function is added to the store)
-@[7](The middleware function is called)
+@[7-9](The middleware function is called instead of the reducer)
 @[12](The middleware can call the reducer as many times as it needs)
 
 Note:
