@@ -71,7 +71,7 @@ class Store(
 ```
 @[4](A middleware function is added to the store)
 @[7-9](The middleware function is called instead of the reducer)
-@[11-13](The middleware can call the reducer as many times as it needs)
+@[8,11-13](The middleware can call the reducer as many times as it needs)
 
 ---
 ``` Kotlin
