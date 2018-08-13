@@ -6,7 +6,8 @@ data class User(
   val isLoggedIn: Boolean = false
 )
 ```
-@[3](Go package main for executable command)
+@[3](When the user is not logged in we show a login screen)
+@[3](When the user is logged in we show a home screen)
 
 Note:
 In Redux you create an immutable object that reflects the state of your application.
