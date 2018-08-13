@@ -13,7 +13,7 @@ In Redux you create an immutable object that reflects the state of your applicat
 
 ---
 ``` Kotlin
-data class LoginAction(val name: String, val pass:String
+data class LoginAction(val name: String, val pass:String)
 
 class Store(
   var state: User = User()
@@ -71,11 +71,50 @@ class Store(
 ```
 @[4](A middleware function is added to the store)
 @[7-9](The middleware function is called instead of the reducer)
-@[12](The middleware can call the reducer as many times as it needs)
+@[11-13](The middleware can call the reducer as many times as it needs)
+
+---
+``` Kotlin
+fun middleware(
+  getState: () -> User, 
+  dispatch: (action: Any) -> Unit, 
+  action: Any, 
+  next: (action: Any) -> Unit) {
+  // black magic
+}
+```
+@[2](Will return the current state held by the store. Often used to validate the state after something asynchronous.)
+@[3](Will call `Store.dispatch` so that all the reducers and middlewares get called.)
+@[5](Will update the state by calling the reducer with the given action.)
 
 Note:
-Within the middleware
-- Asynchronisity like persisting or networking
-- Logging: Check the state before and after dispatching
-- Edit the current action or dispatch new actions
+The past slide showed a simplified version of the middleware with only two parameters. These two parameters cover the essence of a middleware, but in some occasions you need more than those.
 
++++
+``` Kotlin
+data class LoginAction(val name: String, val pass:String)
+object LoadingAction
+object SuccessAction
+object FailureAction
+
+private fun login(name: String, pass: String, onSuccess: () -> Unit, onError: () -> Unit) {
+ // login magic
+}
+
+fun middleware(getState: () -> User, dispatch: (Any) -> Unit, action: Any, next: (Any) -> Unit) {
+  when(action) {
+    is LoginAction -> {
+      next(LoadingAction)
+      login(
+        action.name, 
+        action.pass, 
+        { next(SuccessAction) }, 
+        { next(ErrorAction) }
+      )
+    }
+    else -> next(action)
+  }
+}
+
+
+```
