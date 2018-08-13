@@ -168,7 +168,7 @@ Example: Reducer
 fun reducer(state: User, action: Any) {
   when(action) {
     is SuccessAction -> state.copy(isLoggedIn = true)
-    is FailuerAction -> state.copy(isLoggedIn = false)
+    is FailureAction -> state.copy(isLoggedIn = false)
     else -> state
   }
 }
