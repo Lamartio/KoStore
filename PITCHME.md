@@ -6,7 +6,8 @@ data class User(
   val isLoggedIn: Boolean = false
 )
 ```
-@[3](When the user is not logged in we show the login screen\n, otherwise we show the home screen.)
+@[3](When the user is not logged in we show the login screen
+, otherwise we show the home screen.)
 
 Note:
 In Redux you create an immutable object that reflects the state of your application. This state can be used to render the UI:
