@@ -142,7 +142,7 @@ fun middleware(getState: () -> User, dispatch: (Any) -> Unit, action: Any, next:
 @[4](Before the login: Send the loading action)
 @[5-10](Call the login function)
 @[8-9](After the login: Send either the success or the failure action)
-@[12](NOTE: When the middleware doesn't know how to handle this `action`, tt will just call `next`)
+@[12](NOTE: When the middleware doesn't know how to handle this `action`, it will just call `next`)
 
 ---
 @title[Middleware: Reducer]
@@ -157,6 +157,6 @@ fun reducer(state: User, action: Any) {
 }
 ```
 
-@[1](The actions sent by the middleware are received in the reducer)
+@[1](The actions sent by the middleware are received by the reducer)
 @[3-4](For now we only handle success and failure)
 
